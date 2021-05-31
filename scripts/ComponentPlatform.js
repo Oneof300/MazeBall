@@ -32,8 +32,6 @@ var PuzzleGame;
                 triggerNode.addComponent(triggerBody);
                 this.triggers.push(triggerBody);
                 PuzzleGame.scene.addChild(triggerNode);
-            });
-            node.getChildrenByName("Floor").forEach(floor => {
                 floor.addComponent(new PuzzleGame.f.ComponentRigidbody(0, PuzzleGame.f.PHYSICS_TYPE.KINEMATIC, PuzzleGame.f.COLLIDER_TYPE.CUBE));
             });
             node.getChildrenByName("Wall").forEach(wall => {

@@ -22,12 +22,10 @@ namespace PuzzleGame {
         this.triggers.push(triggerBody);
 
         scene.addChild(triggerNode);
-      });
 
-      node.getChildrenByName("Floor").forEach(floor => {
         floor.addComponent(new f.ComponentRigidbody(0, f.PHYSICS_TYPE.KINEMATIC, f.COLLIDER_TYPE.CUBE));
       });
-  
+      
       node.getChildrenByName("Wall").forEach(wall => {
         wall.addComponent(new f.ComponentRigidbody(0, f.PHYSICS_TYPE.KINEMATIC, f.COLLIDER_TYPE.CUBE));
       });
