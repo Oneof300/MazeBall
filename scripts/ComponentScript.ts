@@ -1,6 +1,6 @@
 namespace PuzzleGame {
-
   export class ComponentScript extends f.ComponentScript {
+
     constructor() {
       super();
       if (this.onAdded != undefined) this.addEventListener(f.EVENT.COMPONENT_ADD, (event: Event) => {
@@ -9,5 +9,6 @@ namespace PuzzleGame {
     }
 
     protected onAdded?(_event: Event): void;
+    
   }
 }
