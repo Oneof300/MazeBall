@@ -29,7 +29,7 @@ var PuzzleGame;
             this.trigger = new PuzzleGame.Trigger(pos, size);
             this.trigger.addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, this.onTriggerEnter);
             this.trigger.addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, this.onTriggerExit);
-            PuzzleGame.scene.addChild(this.trigger);
+            node.addChild(this.trigger);
         }
     }
     PuzzleGame.ComponentPlatform = ComponentPlatform;

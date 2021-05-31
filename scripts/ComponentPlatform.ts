@@ -45,7 +45,7 @@ namespace PuzzleGame {
       this.trigger.addEventListener(f.EVENT_PHYSICS.TRIGGER_ENTER, this.onTriggerEnter);
       this.trigger.addEventListener(f.EVENT_PHYSICS.TRIGGER_ENTER, this.onTriggerExit);
 
-      scene.addChild(this.trigger);
+      node.addChild(this.trigger);
     }
 
   }
