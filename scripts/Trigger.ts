@@ -7,7 +7,7 @@ namespace PuzzleGame {
       this.addComponent(new f.ComponentTransform());
       this.mtxLocal.translate(_pos);
       this.mtxLocal.scale(_size);
-      
+
       this.addComponent(new f.ComponentRigidbody(0, f.PHYSICS_TYPE.STATIC, f.COLLIDER_TYPE.CUBE, f.PHYSICS_GROUP.TRIGGER));
     }
   }
