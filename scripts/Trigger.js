@@ -7,7 +7,8 @@ var PuzzleGame;
             this.addComponent(new PuzzleGame.f.ComponentTransform());
             this.mtxLocal.translate(_pos);
             this.mtxLocal.scale(_size);
-            this.addComponent(new PuzzleGame.f.ComponentRigidbody(0, PuzzleGame.f.PHYSICS_TYPE.STATIC, PuzzleGame.f.COLLIDER_TYPE.CUBE, PuzzleGame.f.PHYSICS_GROUP.TRIGGER));
+            this.box = new PuzzleGame.f.ComponentRigidbody(0, PuzzleGame.f.PHYSICS_TYPE.STATIC, PuzzleGame.f.COLLIDER_TYPE.CUBE, PuzzleGame.f.PHYSICS_GROUP.TRIGGER);
+            this.addComponent(this.box);
         }
     }
     PuzzleGame.Trigger = Trigger;

@@ -5,7 +5,6 @@ var PuzzleGame;
     window.addEventListener("load", init);
     let viewport;
     let canvas;
-    PuzzleGame.controlledPlatforms = new Array();
     async function init() {
         canvas = document.querySelector("canvas");
         // load resources referenced in the link-tag
@@ -46,18 +45,14 @@ var PuzzleGame;
         viewport.draw();
         PuzzleGame.f.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         PuzzleGame.f.Loop.start();
-        PuzzleGame.controlledPlatforms.splice(0, PuzzleGame.controlledPlatforms.length);
-        PuzzleGame.controlledPlatforms.push(PuzzleGame.scene.getChildrenByName("Platform")[0]);
     }
     function update() {
         PuzzleGame.f.Physics.world.simulate(PuzzleGame.f.Loop.timeFrameReal / 1000);
         viewport.draw();
     }
     function handleMouse(_event) {
-        PuzzleGame.controlledPlatforms.forEach(platform => {
-            platform.mtxLocal.rotateX(_event.movementY / 50);
-            platform.mtxLocal.rotateZ(-_event.movementX / 50);
-        });
+        PuzzleGame.controlledPlatform.mtxLocal.rotateX(_event.movementY / 50);
+        PuzzleGame.controlledPlatform.mtxLocal.rotateZ(-_event.movementX / 50);
     }
 })(PuzzleGame || (PuzzleGame = {}));
 //# sourceMappingURL=MazeBall.js.map

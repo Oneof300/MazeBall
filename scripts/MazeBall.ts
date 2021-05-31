@@ -7,7 +7,7 @@ namespace PuzzleGame {
   let canvas: HTMLCanvasElement;
 
   export let scene: f.Graph;
-  export let controlledPlatforms: f.Node[] = new Array();
+  export let controlledPlatform: f.Node;
 
   async function init(): Promise<void> {
     canvas = document.querySelector("canvas");
@@ -60,9 +60,6 @@ namespace PuzzleGame {
     viewport.draw();
     f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
     f.Loop.start();
-
-    controlledPlatforms.splice(0, controlledPlatforms.length);
-    controlledPlatforms.push(scene.getChildrenByName("Platform")[0]);
   }
 
   function update(): void {
@@ -71,9 +68,7 @@ namespace PuzzleGame {
   }
 
   function handleMouse(_event: MouseEvent): void {
-    controlledPlatforms.forEach(platform => {
-      platform.mtxLocal.rotateX(_event.movementY / 50);
-      platform.mtxLocal.rotateZ(-_event.movementX / 50);
-    });
+    controlledPlatform.mtxLocal.rotateX(_event.movementY / 50);
+    controlledPlatform.mtxLocal.rotateZ(-_event.movementX / 50);
   }
 }

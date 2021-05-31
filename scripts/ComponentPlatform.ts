@@ -16,13 +16,10 @@ namespace PuzzleGame {
     }
 
     private onTriggerEnter = (_event: f.EventPhysics) => {
-      console.log("Ball entered platform");
-      controlledPlatforms.push(this.getContainer());
-    }
-
-    private onTriggerExit = (_event: f.EventPhysics) => {
-      console.log("Ball exited platform");
-      controlledPlatforms.splice(controlledPlatforms.indexOf(this.getContainer()));
+      if (_event.cmpRigidbody.getContainer().name == "Ball") {
+        console.log("Ball entered platform");
+        controlledPlatform = this.getContainer();
+      }
     }
 
     private initializeTrigger(node: f.Node): void {
@@ -42,8 +39,7 @@ namespace PuzzleGame {
       let pos: f.Vector3 = new f.Vector3(left + size.x / 2, 0, front + size.z / 2);
 
       this.trigger = new Trigger(pos, size);
-      this.trigger.addEventListener(f.EVENT_PHYSICS.TRIGGER_ENTER, this.onTriggerEnter);
-      this.trigger.addEventListener(f.EVENT_PHYSICS.TRIGGER_ENTER, this.onTriggerExit);
+      this.trigger.box.addEventListener(f.EVENT_PHYSICS.TRIGGER_ENTER, this.onTriggerEnter);
 
       node.addChild(this.trigger);
     }

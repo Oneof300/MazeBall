@@ -5,12 +5,10 @@ var PuzzleGame;
         constructor() {
             super(...arguments);
             this.onTriggerEnter = (_event) => {
-                console.log("Ball entered platform");
-                PuzzleGame.controlledPlatforms.push(this.getContainer());
-            };
-            this.onTriggerExit = (_event) => {
-                console.log("Ball exited platform");
-                PuzzleGame.controlledPlatforms.splice(PuzzleGame.controlledPlatforms.indexOf(this.getContainer()));
+                if (_event.cmpRigidbody.getContainer().name == "Ball") {
+                    console.log("Ball entered platform");
+                    PuzzleGame.controlledPlatform = this.getContainer();
+                }
             };
         }
         onAdded(_event) {
@@ -27,8 +25,7 @@ var PuzzleGame;
             let size = new PuzzleGame.f.Vector3(right - left, 20, back - front);
             let pos = new PuzzleGame.f.Vector3(left + size.x / 2, 0, front + size.z / 2);
             this.trigger = new PuzzleGame.Trigger(pos, size);
-            this.trigger.addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, this.onTriggerEnter);
-            this.trigger.addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, this.onTriggerExit);
+            this.trigger.box.addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, this.onTriggerEnter);
             node.addChild(this.trigger);
         }
     }
