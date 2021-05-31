@@ -4,47 +4,40 @@ var PuzzleGame;
     class ComponentPlatform extends PuzzleGame.ComponentScript {
         constructor() {
             super(...arguments);
-            this.triggers = new Array();
             this.onTriggerEnter = (_event) => {
-                if (_event.cmpRigidbody.getContainer().name == "Ball"
-                    && !this.triggers.some(trigger => trigger != _event.target && trigger.bodiesInTrigger.includes(_event.cmpRigidbody))) {
-                    this.onBallEnteredPlatform(_event);
-                }
+                console.log("Ball entered platform");
+                PuzzleGame.controlledPlatforms.push(this.getContainer());
             };
             this.onTriggerExit = (_event) => {
-                if (_event.cmpRigidbody.getContainer().name == "Ball"
-                    && !this.triggers.some(trigger => trigger.bodiesInTrigger.includes(_event.cmpRigidbody))) {
-                    this.onBallExitedPlatform(_event);
-                }
+                console.log("Ball exited platform");
+                PuzzleGame.controlledPlatforms.splice(PuzzleGame.controlledPlatforms.indexOf(this.getContainer()));
             };
         }
         onAdded(_event) {
             let node = this.getContainer();
+            let xPositions = node.getChildren().map(child => {
+                let childMeshScaling = child.getComponent(PuzzleGame.f.ComponentMesh).mtxPivot.scaling;
+                return child.mtxLocal.translation.x + childMeshScaling.x * child.mtxLocal.translation.x < 0 ? -1 : 1;
+            });
+            let zPositions = node.getChildren().map(child => {
+                let childMeshScaling = child.getComponent(PuzzleGame.f.ComponentMesh).mtxPivot.scaling;
+                return child.mtxLocal.translation.z + childMeshScaling.z * child.mtxLocal.translation.z < 0 ? -1 : 1;
+            });
+            let left = Math.min(...xPositions);
+            let right = Math.max(...xPositions);
+            let front = Math.min(...zPositions);
+            let back = Math.max(...zPositions);
+            let size = new PuzzleGame.f.Vector3(right - left, 20, back - front);
+            let pos = new PuzzleGame.f.Vector3(left + size.x / 2, 0, front + size.z / 2);
+            this.trigger = new PuzzleGame.Trigger(pos, size);
+            this.trigger.addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, this.onTriggerEnter);
+            this.trigger.addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, this.onTriggerExit);
             node.getChildrenByName("Floor").forEach(floor => {
-                let triggerNode = new PuzzleGame.f.Node("Trigger");
-                let floorMeshScaling = floor.getComponent(PuzzleGame.f.ComponentMesh).mtxPivot.scaling;
-                triggerNode.addComponent(new PuzzleGame.f.ComponentTransform());
-                triggerNode.mtxLocal.translate(floor.mtxLocal.translation);
-                triggerNode.mtxLocal.scale(new PuzzleGame.f.Vector3(floorMeshScaling.x, 20, floorMeshScaling.z));
-                let triggerBody = new PuzzleGame.f.ComponentRigidbody(0, PuzzleGame.f.PHYSICS_TYPE.STATIC, PuzzleGame.f.COLLIDER_TYPE.CUBE, PuzzleGame.f.PHYSICS_GROUP.TRIGGER);
-                triggerBody.addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, this.onTriggerEnter);
-                triggerBody.addEventListener("TriggerLeftCollision" /* TRIGGER_EXIT */, this.onTriggerExit);
-                triggerNode.addComponent(triggerBody);
-                this.triggers.push(triggerBody);
-                PuzzleGame.scene.addChild(triggerNode);
                 floor.addComponent(new PuzzleGame.f.ComponentRigidbody(0, PuzzleGame.f.PHYSICS_TYPE.KINEMATIC, PuzzleGame.f.COLLIDER_TYPE.CUBE));
             });
             node.getChildrenByName("Wall").forEach(wall => {
                 wall.addComponent(new PuzzleGame.f.ComponentRigidbody(0, PuzzleGame.f.PHYSICS_TYPE.KINEMATIC, PuzzleGame.f.COLLIDER_TYPE.CUBE));
             });
-        }
-        onBallEnteredPlatform(_event) {
-            console.log("Ball entered platform");
-            PuzzleGame.controlledPlatforms.push(this.getContainer());
-        }
-        onBallExitedPlatform(_event) {
-            console.log("Ball exited platform");
-            PuzzleGame.controlledPlatforms.splice(PuzzleGame.controlledPlatforms.indexOf(this.getContainer()));
         }
     }
     PuzzleGame.ComponentPlatform = ComponentPlatform;
