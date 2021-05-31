@@ -1,22 +1,24 @@
 namespace PuzzleGame {
-  import f = FudgeCore;
+  export import f = FudgeCore;
 
   window.addEventListener("load", init);
 
   let viewport: f.Viewport;
-  let floor: f.Node;
   let canvas: HTMLCanvasElement;
+
+  export let scene: f.Graph;
+  export let controlledPlatform: f.Node;
 
   async function init(): Promise<void> {
     canvas = document.querySelector("canvas");
 
     // load resources referenced in the link-tag
-    await f.Project.loadResources("../resources/MazeBall.json");
+    await f.Project.loadResources("../static/MazeBall.json");
     f.Debug.log("Project:", f.Project.resources);
 
     // load start scene
     let sceneID: string = "Graph|2021-05-25T15:28:57.816Z|73244";
-    let scene: f.Graph = f.Project.resources[sceneID] as f.Graph;
+    scene = f.Project.resources[sceneID] as f.Graph;
 
     // initialize physics
     f.Physics.initializePhysics();
@@ -24,18 +26,19 @@ namespace PuzzleGame {
     f.Physics.settings.debugDraw = true;
 
     // setup graph
-    floor = scene.getChildrenByName("Floor")[0];
-    floor.addComponent(new f.ComponentRigidbody(0, f.PHYSICS_TYPE.KINEMATIC, f.COLLIDER_TYPE.CUBE));
-    floor.addComponent(new f.ComponentTransform());
+    scene.getChildrenByName("Platform").forEach(platform => platform.addComponent(new ComponentPlatform()));
+
     scene.getChildrenByName("Ball")[0].addComponent(new f.ComponentRigidbody(20, f.PHYSICS_TYPE.DYNAMIC, f.COLLIDER_TYPE.SPHERE));
+
     f.Debug.log("Scene:", scene);
     f.Physics.adjustTransforms(scene, true);
 
     // setup camera
     let camera: f.ComponentCamera = new f.ComponentCamera();
-    camera.mtxPivot.translateX(-28);
+    camera.mtxPivot.translateX(10);
     camera.mtxPivot.translateY(25);
-    camera.mtxPivot.rotateY(90);
+    camera.mtxPivot.translateZ(28);
+    camera.mtxPivot.rotateY(180);
     camera.mtxPivot.rotateX(45);
 
     // setup viewport
@@ -65,7 +68,7 @@ namespace PuzzleGame {
   }
 
   function handleMouse(_event: MouseEvent): void {
-    floor.mtxLocal.rotateZ(_event.movementY / 50);
-    floor.mtxLocal.rotateX(_event.movementX / 50);
+    controlledPlatform.mtxLocal.rotateX(_event.movementY / 50);
+    controlledPlatform.mtxLocal.rotateZ(-_event.movementX / 50);
   }
 }
