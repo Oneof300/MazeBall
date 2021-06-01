@@ -1,5 +1,10 @@
 namespace MazeBall {
   export class ComponentPlatform extends ComponentScript {
+    
+    constructor() {
+      super();
+      this.singleton = true;
+    }
 
     protected onAdded(_event: Event): void {
       let node: f.Node = this.getContainer();

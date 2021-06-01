@@ -3,11 +3,12 @@ var MazeBall;
 (function (MazeBall) {
     class ComponentPlatform extends MazeBall.ComponentScript {
         constructor() {
-            super(...arguments);
+            super();
             this.onCollisionEnter = (_event) => {
                 if (_event.cmpRigidbody.getContainer().name == "Ball")
                     MazeBall.controlledPlatform = this.getContainer().mtxLocal;
             };
+            this.singleton = true;
         }
         onAdded(_event) {
             let node = this.getContainer();

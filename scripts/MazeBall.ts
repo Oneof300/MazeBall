@@ -27,7 +27,6 @@ namespace MazeBall {
 
     // setup graph
     scene.getChildrenByName("Platform").forEach(platform => platform.addComponent(new ComponentPlatform()));
-
     scene.getChildrenByName("Ball")[0].addComponent(new f.ComponentRigidbody(20, f.PHYSICS_TYPE.DYNAMIC, f.COLLIDER_TYPE.SPHERE));
 
     f.Debug.log("Scene:", scene);
