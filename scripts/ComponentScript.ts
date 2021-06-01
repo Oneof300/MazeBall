@@ -1,4 +1,4 @@
-namespace PuzzleGame {
+namespace MazeBall {
   export class ComponentScript extends f.ComponentScript {
 
     constructor() {

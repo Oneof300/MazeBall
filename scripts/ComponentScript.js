@@ -1,7 +1,7 @@
 "use strict";
-var PuzzleGame;
-(function (PuzzleGame) {
-    class ComponentScript extends PuzzleGame.f.ComponentScript {
+var MazeBall;
+(function (MazeBall) {
+    class ComponentScript extends MazeBall.f.ComponentScript {
         constructor() {
             super();
             if (this.onAdded != undefined)
@@ -11,6 +11,6 @@ var PuzzleGame;
                 });
         }
     }
-    PuzzleGame.ComponentScript = ComponentScript;
-})(PuzzleGame || (PuzzleGame = {}));
+    MazeBall.ComponentScript = ComponentScript;
+})(MazeBall || (MazeBall = {}));
 //# sourceMappingURL=ComponentScript.js.map

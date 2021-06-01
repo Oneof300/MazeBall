@@ -1,4 +1,4 @@
-namespace PuzzleGame {
+namespace MazeBall {
   export import f = FudgeCore;
 
   window.addEventListener("load", init);
@@ -7,7 +7,7 @@ namespace PuzzleGame {
   let canvas: HTMLCanvasElement;
 
   export let scene: f.Graph;
-  export let controlledPlatform: f.Node;
+  export let controlledPlatform: f.Matrix4x4;
 
   async function init(): Promise<void> {
     canvas = document.querySelector("canvas");
@@ -54,12 +54,16 @@ namespace PuzzleGame {
     f.Debug.log("Audio:", f.AudioManager.default);
 
     // setup controll
-    canvas.addEventListener("mousemove", handleMouse);
+    canvas.addEventListener("click", () => {
+      canvas.requestPointerLock();
+      canvas.addEventListener("mousemove", handleMouse);
+      canvas.addEventListener("wheel", handleWheel);
+    });
 
     // start game
     viewport.draw();
     f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
-    f.Loop.start();
+    f.Loop.start(f.LOOP_MODE.TIME_REAL, 120);
   }
 
   function update(): void {
@@ -68,7 +72,11 @@ namespace PuzzleGame {
   }
 
   function handleMouse(_event: MouseEvent): void {
-    controlledPlatform.mtxLocal.rotateX(_event.movementY / 50);
-    controlledPlatform.mtxLocal.rotateZ(-_event.movementX / 50);
+    controlledPlatform.rotateX(_event.movementY * 0.05);
+    controlledPlatform.rotateZ(_event.movementX * -0.05);
+  }
+
+  function handleWheel(_event: WheelEvent) {
+    controlledPlatform.rotateY(_event.deltaY * 0.05);
   }
 }
