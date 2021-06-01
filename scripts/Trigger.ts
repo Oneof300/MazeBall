@@ -1,4 +1,4 @@
-namespace PuzzleGame {
+namespace MazeBall {
   export class Trigger extends f.Node {
 
     readonly box: f.ComponentRigidbody;
