@@ -1,8 +1,6 @@
 namespace MazeBall {
   export class ComponentPlatform extends ComponentScript {
 
-    private trigger: Trigger;
-
     protected onAdded(_event: Event): void {
       let node: f.Node = this.getContainer();
 
