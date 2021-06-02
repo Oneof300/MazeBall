@@ -1,2 +1,2 @@
 # MazeBall
-Tilt the maze to move the ball to the target point but be aware of the special obstacles.
+Tilt the platforms to move the ball to the final platform but be aware of the special obstacles.
