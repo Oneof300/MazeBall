@@ -20,6 +20,10 @@ var MazeBall;
             node.getChildrenByName("Wall").forEach(wall => {
                 wall.addComponent(new MazeBall.f.ComponentRigidbody(0, MazeBall.f.PHYSICS_TYPE.KINEMATIC, MazeBall.f.COLLIDER_TYPE.CUBE));
             });
+            node.getChildrenByName("Cannon").forEach(cannon => {
+                cannon.addComponent(new MazeBall.f.ComponentRigidbody(0, MazeBall.f.PHYSICS_TYPE.KINEMATIC, MazeBall.f.COLLIDER_TYPE.CUBE));
+                cannon.addComponent(new MazeBall.ComponentCannon(MazeBall.f.Vector3.Z(6), new MazeBall.f.Vector3(5, 10, 5)));
+            });
         }
     }
     MazeBall.ComponentPlatform = ComponentPlatform;

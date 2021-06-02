@@ -1,12 +1,12 @@
 namespace MazeBall {
   export class ComponentPlatform extends ComponentScript {
-    
+
     constructor() {
       super();
       this.singleton = true;
     }
 
-    protected onAdded(_event: Event): void {
+    onAdded(_event: Event): void {
       let node: f.Node = this.getContainer();
 
       node.getChildrenByName("Floor").forEach(floor => {
@@ -17,6 +17,11 @@ namespace MazeBall {
       
       node.getChildrenByName("Wall").forEach(wall => {
         wall.addComponent(new f.ComponentRigidbody(0, f.PHYSICS_TYPE.KINEMATIC, f.COLLIDER_TYPE.CUBE));
+      });
+      
+      node.getChildrenByName("Cannon").forEach(cannon => {
+        cannon.addComponent(new f.ComponentRigidbody(0, f.PHYSICS_TYPE.KINEMATIC, f.COLLIDER_TYPE.CUBE));
+        cannon.addComponent(new ComponentCannon(f.Vector3.Z(6), new f.Vector3(5, 10, 5)));
       });
     }
 
