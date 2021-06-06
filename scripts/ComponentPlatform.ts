@@ -6,7 +6,7 @@ namespace MazeBall {
       this.singleton = true;
     }
 
-    onAdded(_event: Event): void {
+    protected onAdded(_event: Event): void {
       let node: f.Node = this.getContainer();
 
       node.getChildrenByName("Floor").forEach(floor => {
