@@ -13,7 +13,7 @@ namespace MazeBall {
     canvas = document.querySelector("canvas");
 
     // load resources referenced in the link-tag
-    await f.Project.loadResources("../static/MazeBall.json");
+    await f.Project.loadResources("../resources/Scene.json");
     f.Debug.log("Project:", f.Project.resources);
 
     // load start scene
