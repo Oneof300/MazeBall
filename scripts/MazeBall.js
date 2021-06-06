@@ -8,7 +8,7 @@ var MazeBall;
     async function init() {
         canvas = document.querySelector("canvas");
         // load resources referenced in the link-tag
-        await MazeBall.f.Project.loadResources("../static/MazeBall.json");
+        await MazeBall.f.Project.loadResources("../resources/Scene.json");
         MazeBall.f.Debug.log("Project:", MazeBall.f.Project.resources);
         // load start scene
         let sceneID = "Graph|2021-05-25T15:28:57.816Z|73244";
