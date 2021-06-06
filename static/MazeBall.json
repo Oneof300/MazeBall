@@ -11,13 +11,13 @@
       "idResource": "MeshSphere|2021-05-25T15:26:35.712Z|33287",
       "name": "MeshSphere",
       "type": "MeshSphere",
-      "sectors": 10,
-      "stacks": 8
+      "sectors": 9,
+      "stacks": 5
     }
   },
   "Material|2021-05-25T15:28:46.097Z|64234": {
     "ƒ.Material": {
-      "name": "MatDummy",
+      "name": "MatFlat",
       "idResource": "Material|2021-05-25T15:28:46.097Z|64234",
       "shader": "ShaderFlat",
       "coat": {
@@ -561,7 +561,7 @@
                 {
                   "ƒ.ComponentTransform": {
                     "local": {
-                      "translation": "[16, -5, 0]",
+                      "translation": "[15, -3, 0]",
                       "rotation": "[0, 0, 0]",
                       "scaling": "[1, 1, 1]"
                     },
@@ -962,6 +962,61 @@
                   },
                   "children": []
                 }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "Cannon",
+                  "components": {
+                    "ComponentMesh": [
+                      {
+                        "ƒ.ComponentMesh": {
+                          "idMesh": "MeshRotation|2021-06-01T16:58:34.883Z|69851",
+                          "pivot": {
+                            "translation": "[0, 0, 0]",
+                            "rotation": "[90, 0, 0]",
+                            "scaling": "[1, 2.5, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ],
+                    "ComponentMaterial": [
+                      {
+                        "ƒ.ComponentMaterial": {
+                          "sortForAlpha": false,
+                          "clrPrimary": "[1, 1, 1, 1]",
+                          "clrSecondary": "[1, 1, 1, 1]",
+                          "pivot": {
+                            "translation": "[0, 0]",
+                            "rotation": 0,
+                            "scaling": "[1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          },
+                          "idMaterial": "Material|2021-05-25T15:28:46.097Z|64234"
+                        }
+                      }
+                    ],
+                    "ComponentTransform": [
+                      {
+                        "ƒ.ComponentTransform": {
+                          "local": {
+                            "translation": "[0, 1.399999976158142, -7.75]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[1, 1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "children": []
+                }
               }
             ]
           }
@@ -1012,6 +1067,26 @@
       "children": [],
       "idResource": "Graph|2021-05-31T05:42:10.533Z|25639",
       "type": "Graph"
+    }
+  },
+  "MeshRotation|2021-06-01T16:58:34.883Z|69851": {
+    "ƒ.MeshRotation": {
+      "idResource": "MeshRotation|2021-06-01T16:58:34.883Z|69851",
+      "name": "Cannon",
+      "type": "MeshRotation",
+      "shape": {
+        "ƒ.Vector2": [
+          "[0, -0.25]",
+          "[0.5, -0.25]",
+          "[0.5, 0.5]",
+          "[0.6499999761581421, 0.44999998807907104]",
+          "[0.800000011920929, -0.20000000298023224]",
+          "[0.6499999761581421, -0.4000000059604645]",
+          "[0, -0.5]"
+        ]
+      },
+      "fitTexture": true,
+      "sectors": 9
     }
   }
 }
