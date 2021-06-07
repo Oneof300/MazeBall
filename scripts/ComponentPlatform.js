@@ -6,7 +6,7 @@ var MazeBall;
             super();
             this.onCollisionEnter = (_event) => {
                 if (_event.cmpRigidbody.getContainer().name == "Ball")
-                    MazeBall.controlledPlatform = this.getContainer().mtxLocal;
+                    this.swapControl();
             };
             this.singleton = true;
         }
@@ -25,7 +25,14 @@ var MazeBall;
                 cannon.addComponent(new MazeBall.ComponentCannon(MazeBall.f.Vector3.Z(6), new MazeBall.f.Vector3(5, 10, 5)));
             });
         }
+        swapControl() {
+            if (MazeBall.controlledPlatform != this.getContainer().mtxLocal) {
+                MazeBall.controlledPlatform = this.getContainer().mtxLocal;
+                ComponentPlatform.swapControlAudio.play(true);
+            }
+        }
     }
+    ComponentPlatform.swapControlAudio = new MazeBall.f.ComponentAudio(new MazeBall.f.Audio("../resources/sounds/control_swap.mp3"));
     MazeBall.ComponentPlatform = ComponentPlatform;
 })(MazeBall || (MazeBall = {}));
 //# sourceMappingURL=ComponentPlatform.js.map

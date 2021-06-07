@@ -1,5 +1,8 @@
 namespace MazeBall {
   export class ComponentPlatform extends ComponentScript {
+  
+    public static readonly swapControlAudio: f.ComponentAudio =
+      new f.ComponentAudio(new f.Audio("../resources/sounds/control_swap.mp3"));
 
     constructor() {
       super();
@@ -26,7 +29,14 @@ namespace MazeBall {
     }
 
     private onCollisionEnter = (_event: f.EventPhysics) => {
-      if (_event.cmpRigidbody.getContainer().name == "Ball") controlledPlatform = this.getContainer().mtxLocal;
+      if (_event.cmpRigidbody.getContainer().name == "Ball") this.swapControl();
+    }
+
+    private swapControl(): void {
+      if (controlledPlatform != this.getContainer().mtxLocal) {
+        controlledPlatform = this.getContainer().mtxLocal;
+        ComponentPlatform.swapControlAudio.play(true);
+      }
     }
 
   }
