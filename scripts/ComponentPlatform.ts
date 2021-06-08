@@ -2,7 +2,7 @@ namespace MazeBall {
   export class ComponentPlatform extends ComponentScript {
   
     public static readonly swapControlAudio: f.ComponentAudio =
-      new f.ComponentAudio(new f.Audio("../resources/sounds/control_swap.mp3"));
+      new f.ComponentAudio(new f.Audio("./resources/sounds/control_swap.mp3"));
 
     constructor() {
       super();

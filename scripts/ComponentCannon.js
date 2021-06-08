@@ -21,7 +21,7 @@ var MazeBall;
         fire() {
             console.log("fire");
             const mtxLocal = this.getContainer().mtxLocal;
-            this.projectile.fire(mtxLocal.translation, MazeBall.f.Vector3.SCALE(mtxLocal.getZ(), this.strength));
+            this.projectile.fire(MazeBall.f.Vector3.ZERO(), MazeBall.f.Vector3.SCALE(mtxLocal.getZ(), this.strength));
         }
     }
     MazeBall.ComponentCannon = ComponentCannon;

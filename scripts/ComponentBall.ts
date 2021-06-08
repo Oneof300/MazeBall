@@ -1,7 +1,7 @@
 namespace MazeBall {
   export class ComponentBall extends ComponentScript {
 
-    private static ballHitAudio: f.Audio = new f.Audio("../resources/sounds/ball_hit.mp3");
+    private static ballHitAudio: f.Audio = new f.Audio("./resources/sounds/ball_hit.mp3");
     private ballHitAudio: f.ComponentAudio;
 
     protected onAdded(_event: Event): void {
