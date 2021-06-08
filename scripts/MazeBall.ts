@@ -1,13 +1,13 @@
 namespace MazeBall {
   export import f = FudgeCore;
-
-  window.addEventListener("load", init);
+  
+  export let controlledPlatform: f.Matrix4x4;
 
   let viewport: f.Viewport;
   let canvas: HTMLCanvasElement;
+  let scene: f.Graph;
 
-  export let scene: f.Graph;
-  export let controlledPlatform: f.Matrix4x4;
+  window.addEventListener("load", init);
 
   async function init(): Promise<void> {
     canvas = document.querySelector("canvas");
@@ -16,21 +16,16 @@ namespace MazeBall {
     await f.Project.loadResources("../resources/Scene.json");
     f.Debug.log("Project:", f.Project.resources);
 
-    // load start scene
-    let sceneID: string = "Graph|2021-05-25T15:28:57.816Z|73244";
-    scene = f.Project.resources[sceneID] as f.Graph;
-
     // initialize physics
     f.Physics.initializePhysics();
     f.Physics.settings.debugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
     f.Physics.settings.debugDraw = true;
 
     // setup graph
+    scene = f.Project.resources["Graph|2021-05-25T15:28:57.816Z|73244"] as f.Graph;
     scene.getChildrenByName("Platform").forEach(platform => platform.addComponent(new ComponentPlatform()));
-    scene.getChildrenByName("Ball")[0].addComponent(new f.ComponentRigidbody(20, f.PHYSICS_TYPE.DYNAMIC, f.COLLIDER_TYPE.SPHERE));
-
+    scene.getChildrenByName("Ball")[0].addComponent(new ComponentBall());
     f.Debug.log("Scene:", scene);
-    f.Physics.adjustTransforms(scene, true);
 
     // setup camera
     let camera: f.ComponentCamera = new f.ComponentCamera();
@@ -46,6 +41,7 @@ namespace MazeBall {
     f.Debug.log("Viewport:", viewport);
 
     // setup audio
+    scene.addComponent(ComponentPlatform.swapControlAudio);
     let cmpListener: f.ComponentAudioListener = new f.ComponentAudioListener();
     scene.addComponent(cmpListener);
     f.AudioManager.default.listenWith(cmpListener);
@@ -60,6 +56,7 @@ namespace MazeBall {
     });
 
     // start game
+    f.Physics.adjustTransforms(scene, true);
     viewport.draw();
     f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
     f.Loop.start(f.LOOP_MODE.TIME_REAL, 120);

@@ -16,7 +16,7 @@ namespace MazeBall {
       this.projectile = new Projectile();
     }
 
-    onAdded(_event: Event): void {
+    protected onAdded(_event: Event): void {
       this.getContainer().addChild(this.trigger);
       this.getContainer().addChild(this.projectile);
     }
