@@ -32,7 +32,7 @@ var MazeBall;
             }
         }
     }
-    ComponentPlatform.swapControlAudio = new MazeBall.f.ComponentAudio(new MazeBall.f.Audio("../resources/sounds/control_swap.mp3"));
+    ComponentPlatform.swapControlAudio = new MazeBall.f.ComponentAudio(new MazeBall.f.Audio("./resources/sounds/control_swap.mp3"));
     MazeBall.ComponentPlatform = ComponentPlatform;
 })(MazeBall || (MazeBall = {}));
 //# sourceMappingURL=ComponentPlatform.js.map

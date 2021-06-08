@@ -28,7 +28,7 @@ namespace MazeBall {
     private fire(): void {
       console.log("fire");
       const mtxLocal: f.Matrix4x4 = this.getContainer().mtxLocal;
-      this.projectile.fire(mtxLocal.translation, f.Vector3.SCALE(mtxLocal.getZ(), this.strength));
+      this.projectile.fire(f.Vector3.ZERO(), f.Vector3.SCALE(mtxLocal.getZ(), this.strength));
     }
 
   }

@@ -18,7 +18,7 @@ var MazeBall;
             node.addComponent(body);
         }
     }
-    ComponentBall.ballHitAudio = new MazeBall.f.Audio("../resources/sounds/ball_hit.mp3");
+    ComponentBall.ballHitAudio = new MazeBall.f.Audio("./resources/sounds/ball_hit.mp3");
     MazeBall.ComponentBall = ComponentBall;
 })(MazeBall || (MazeBall = {}));
 //# sourceMappingURL=ComponentBall.js.map

@@ -12,15 +12,16 @@ namespace MazeBall {
 
       this.addComponent(new f.ComponentTransform());
 
-      this.body = new f.ComponentRigidbody(20, f.PHYSICS_TYPE.DYNAMIC, f.COLLIDER_TYPE.SPHERE);
+      this.body = new f.ComponentRigidbody(20, f.PHYSICS_TYPE.STATIC, f.COLLIDER_TYPE.SPHERE, f.PHYSICS_GROUP.TRIGGER);
       this.addComponent(this.body);
 
       this.activate(false);
     }
 
     fire(_pos: f.Vector3, _force: f.Vector3): void {
-      this.activate(true);
       this.mtxLocal.translate(f.Vector3.DIFFERENCE(_pos, this.mtxLocal.translation));
+      this.activate(true);
+      this.body.physicsType = f.PHYSICS_TYPE.DYNAMIC;
       this.body.applyForce(_force);
     }
 

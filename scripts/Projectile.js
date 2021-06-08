@@ -8,13 +8,14 @@ var MazeBall;
             cmpMesh.mtxPivot.scale(MazeBall.f.Vector3.ONE(0.5));
             this.addComponent(cmpMesh);
             this.addComponent(new MazeBall.f.ComponentTransform());
-            this.body = new MazeBall.f.ComponentRigidbody(20, MazeBall.f.PHYSICS_TYPE.DYNAMIC, MazeBall.f.COLLIDER_TYPE.SPHERE);
+            this.body = new MazeBall.f.ComponentRigidbody(20, MazeBall.f.PHYSICS_TYPE.STATIC, MazeBall.f.COLLIDER_TYPE.SPHERE, MazeBall.f.PHYSICS_GROUP.TRIGGER);
             this.addComponent(this.body);
             this.activate(false);
         }
         fire(_pos, _force) {
-            this.activate(true);
             this.mtxLocal.translate(MazeBall.f.Vector3.DIFFERENCE(_pos, this.mtxLocal.translation));
+            this.activate(true);
+            this.body.physicsType = MazeBall.f.PHYSICS_TYPE.DYNAMIC;
             this.body.applyForce(_force);
         }
     }
