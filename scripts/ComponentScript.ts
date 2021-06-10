@@ -1,4 +1,6 @@
 namespace MazeBall {
+  export import f = FudgeCore;
+  
   export class ComponentScript extends f.ComponentScript {
 
     constructor() {

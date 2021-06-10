@@ -1,3 +1,4 @@
+///<reference path="ComponentScript.ts"/>
 namespace MazeBall {
   export class ComponentBall extends ComponentScript {
 
