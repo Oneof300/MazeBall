@@ -146,7 +146,7 @@ var MazeBall;
         scene = MazeBall.f.Project.resources["Graph|2021-05-25T15:28:57.816Z|73244"];
         scene.getChildrenByName("Platform").forEach(platform => platform.addComponent(new MazeBall.ComponentPlatform()));
         scene.getChildrenByName("Ball")[0].addComponent(new MazeBall.ComponentBall());
-        scene.getChildrenByName("Platform")[1].getChildrenByName("Wall")[0].addComponent(new MazeBall.ComponentMovingWall(10, 10, MazeBall.f.Vector3.X()));
+        scene.getChildrenByName("Platform")[1].getChildrenByName("Wall")[0].addComponent(new MazeBall.ComponentMovingWall(5, 5, MazeBall.f.Vector3.X()));
         MazeBall.f.Debug.log("Scene:", scene);
         // setup camera
         let camera = new MazeBall.f.ComponentCamera();

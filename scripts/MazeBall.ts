@@ -24,7 +24,7 @@ namespace MazeBall {
     scene.getChildrenByName("Platform").forEach(platform => platform.addComponent(new ComponentPlatform()));
     scene.getChildrenByName("Ball")[0].addComponent(new ComponentBall());
 
-    scene.getChildrenByName("Platform")[1].getChildrenByName("Wall")[0].addComponent(new ComponentMovingWall(10, 10, f.Vector3.X()));
+    scene.getChildrenByName("Platform")[1].getChildrenByName("Wall")[0].addComponent(new ComponentMovingWall(5, 5, f.Vector3.X()));
     f.Debug.log("Scene:", scene);
 
     // setup camera
