@@ -1,6 +1,4 @@
-namespace MazeBall {
-  export import f = FudgeCore;
-  
+namespace MazeBall {  
   export let controlledPlatform: f.Matrix4x4;
 
   let viewport: f.Viewport;
@@ -25,6 +23,8 @@ namespace MazeBall {
     scene = f.Project.resources["Graph|2021-05-25T15:28:57.816Z|73244"] as f.Graph;
     scene.getChildrenByName("Platform").forEach(platform => platform.addComponent(new ComponentPlatform()));
     scene.getChildrenByName("Ball")[0].addComponent(new ComponentBall());
+
+    scene.getChildrenByName("Platform")[1].getChildrenByName("Wall")[0].addComponent(new ComponentMovingWall(5, 5, f.Vector3.X()));
     f.Debug.log("Scene:", scene);
 
     // setup camera
