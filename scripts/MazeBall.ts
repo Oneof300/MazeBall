@@ -30,7 +30,7 @@ namespace MazeBall {
     // setup camera
     let camera: f.ComponentCamera = new f.ComponentCamera();
     camera.mtxPivot.translateX(10);
-    camera.mtxPivot.translateY(25);
+    camera.mtxPivot.translateY(26);
     camera.mtxPivot.translateZ(28);
     camera.mtxPivot.rotateY(180);
     camera.mtxPivot.rotateX(45);
@@ -49,7 +49,13 @@ namespace MazeBall {
     f.Debug.log("Audio:", f.AudioManager.default);
 
     // setup controll
+    let startMessage: HTMLDivElement = document.createElement("div");
+    startMessage.className = "blink";
+    startMessage.innerText = "click to start";
+    document.body.appendChild(startMessage);
+
     canvas.addEventListener("click", () => {
+      document.body.removeChild(startMessage);
       canvas.requestPointerLock();
       canvas.addEventListener("mousemove", handleMouse);
       canvas.addEventListener("wheel", handleWheel);
@@ -57,7 +63,7 @@ namespace MazeBall {
 
     // start game
     f.Physics.adjustTransforms(scene, true);
-    viewport.draw();
+    //viewport.draw();
     f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
     f.Loop.start(f.LOOP_MODE.TIME_REAL, 120);
   }
