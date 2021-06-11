@@ -204,7 +204,7 @@ var MazeBall;
     async function init() {
         MazeBall.canvas = document.querySelector("canvas");
         // load resources referenced in the link-tag
-        await MazeBall.f.Project.loadResourcesFromHTML();
+        await MazeBall.f.Project.loadResources("./../resources/Scene.json");
         MazeBall.f.Debug.log("Project:", MazeBall.f.Project.resources);
         // initialize physics
         MazeBall.f.Physics.initializePhysics();
