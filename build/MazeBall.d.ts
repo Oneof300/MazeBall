@@ -10,6 +10,7 @@ declare namespace MazeBall {
         private static ballHitAudio;
         private ballHitAudio;
         protected onAdded(_event: Event): void;
+        private onGameReset;
         private onCollision;
     }
 }
@@ -38,21 +39,29 @@ declare namespace MazeBall {
 declare namespace MazeBall {
     class ComponentPlatform extends ComponentScript {
         static readonly swapControlAudio: f.ComponentAudio;
-        constructor();
+        private readonly isFinal;
+        private startPosition;
+        constructor(_final?: boolean);
         protected onAdded(_event: Event): void;
-        private onCollisionEnter;
+        protected onFloorCollisionEnter: (_event: f.EventPhysics) => void;
+        private onGameReset;
         private swapControl;
     }
 }
 declare namespace MazeBall {
     class Game extends EventTarget {
+        static readonly fps: number;
         static readonly start: string;
         static readonly end: string;
-        private _start;
-        private _end;
+        static readonly reset: string;
+        private readonly eventStart;
+        private readonly eventEnd;
+        private readonly eventReset;
+        private isFinished;
         requestClickToStart(): void;
-        start(): void;
-        end(): void;
+        finish(_solved?: boolean): void;
+        reset: () => void;
+        private start;
     }
     const game: Game;
 }

@@ -22,6 +22,12 @@ var MazeBall;
     class ComponentBall extends MazeBall.ComponentScript {
         constructor() {
             super(...arguments);
+            this.onGameReset = (_event) => {
+                let body = this.getContainer().getComponent(MazeBall.f.ComponentRigidbody);
+                body.setVelocity(MazeBall.f.Vector3.ZERO());
+                body.setAngularVelocity(MazeBall.f.Vector3.ZERO());
+                body.setPosition(MazeBall.f.Vector3.Y(3));
+            };
             this.onCollision = (_event) => {
                 this.ballHitAudio.volume = _event.target.getVelocity().magnitude;
                 this.ballHitAudio.play(true);
@@ -34,6 +40,7 @@ var MazeBall;
             let body = new MazeBall.f.ComponentRigidbody(20, MazeBall.f.PHYSICS_TYPE.DYNAMIC, MazeBall.f.COLLIDER_TYPE.SPHERE);
             body.addEventListener("ColliderEnteredCollision" /* COLLISION_ENTER */, this.onCollision);
             node.addComponent(body);
+            MazeBall.game.addEventListener(MazeBall.Game.reset, this.onGameReset);
         }
     }
     ComponentBall.ballHitAudio = new MazeBall.f.Audio("./resources/sounds/ball_hit.mp3");
@@ -95,19 +102,27 @@ var MazeBall;
 var MazeBall;
 (function (MazeBall) {
     class ComponentPlatform extends MazeBall.ComponentScript {
-        constructor() {
+        constructor(_final = false) {
             super();
-            this.onCollisionEnter = (_event) => {
-                if (_event.cmpRigidbody.getContainer().name == "Ball")
-                    this.swapControl();
+            this.onFloorCollisionEnter = (_event) => {
+                if (_event.cmpRigidbody.getContainer().name == "Ball") {
+                    if (this.isFinal)
+                        MazeBall.game.finish();
+                    else
+                        this.swapControl();
+                }
+            };
+            this.onGameReset = (_event) => {
+                this.getContainer().mtxLocal.set(MazeBall.f.Matrix4x4.TRANSLATION(this.startPosition));
             };
             this.singleton = true;
+            this.isFinal = _final;
         }
         onAdded(_event) {
             let node = this.getContainer();
             node.getChildrenByName("Floor").forEach(floor => {
                 let body = new MazeBall.f.ComponentRigidbody(0, MazeBall.f.PHYSICS_TYPE.KINEMATIC, MazeBall.f.COLLIDER_TYPE.CUBE);
-                body.addEventListener("ColliderEnteredCollision" /* COLLISION_ENTER */, this.onCollisionEnter);
+                body.addEventListener("ColliderEnteredCollision" /* COLLISION_ENTER */, this.onFloorCollisionEnter);
                 floor.addComponent(body);
             });
             node.getChildrenByName("Wall").forEach(wall => {
@@ -117,6 +132,8 @@ var MazeBall;
                 cannon.addComponent(new MazeBall.f.ComponentRigidbody(0, MazeBall.f.PHYSICS_TYPE.KINEMATIC, MazeBall.f.COLLIDER_TYPE.CUBE));
                 cannon.addComponent(new MazeBall.ComponentCannon(MazeBall.f.Vector3.Z(6), new MazeBall.f.Vector3(5, 10, 5)));
             });
+            this.startPosition = this.getContainer().mtxLocal.translation;
+            MazeBall.game.addEventListener(MazeBall.Game.reset, this.onGameReset);
         }
         swapControl() {
             if (MazeBall.PlayerControl.instance.controlledPlatform != this.getContainer()) {
@@ -133,32 +150,50 @@ var MazeBall;
     class Game extends EventTarget {
         constructor() {
             super(...arguments);
-            this._start = new Event(Game.start);
-            this._end = new Event(Game.end);
+            this.eventStart = new Event(Game.start);
+            this.eventEnd = new Event(Game.end);
+            this.eventReset = new Event(Game.reset);
+            this.isFinished = false;
+            this.reset = () => {
+                if (!this.isFinished)
+                    this.finish(false);
+                else
+                    MazeBall.canvas.removeEventListener("click", this.reset);
+                this.dispatchEvent(this.eventReset);
+                this.requestClickToStart();
+                MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, Game.fps);
+            };
+            this.start = () => {
+                this.isFinished = false;
+                document.getElementById("message").className = "invisible";
+                MazeBall.canvas.removeEventListener("click", this.start);
+                MazeBall.canvas.requestPointerLock();
+                this.dispatchEvent(this.eventStart);
+                MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, Game.fps);
+            };
         }
         requestClickToStart() {
-            let startMessage = document.createElement("div");
-            startMessage.className = "blink";
-            startMessage.innerText = "click to start";
-            document.body.appendChild(startMessage);
-            MazeBall.canvas.addEventListener("click", () => {
-                this.start();
-                MazeBall.canvas.requestPointerLock();
-                document.body.removeChild(startMessage);
-            });
+            let message = document.getElementById("message");
+            message.className = "blink";
+            message.innerText = "click to start";
+            MazeBall.canvas.addEventListener("click", this.start);
         }
-        start() {
-            this.dispatchEvent(this._start);
-            MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, 120);
-        }
-        end() {
-            this.dispatchEvent(this._end);
+        finish(_solved = true) {
+            if (_solved) {
+                let message = document.getElementById("message");
+                message.className = "blink";
+                message.innerText = "Finished!\nclick to reset";
+                MazeBall.canvas.addEventListener("click", this.reset);
+            }
+            this.isFinished = true;
+            this.dispatchEvent(this.eventEnd);
             MazeBall.f.Loop.stop();
-            this.requestClickToStart();
         }
     }
+    Game.fps = 120;
     Game.start = "gamestart";
     Game.end = "gameend";
+    Game.reset = "gamereset";
     MazeBall.Game = Game;
     MazeBall.game = new Game();
 })(MazeBall || (MazeBall = {}));
@@ -178,6 +213,7 @@ var MazeBall;
         // setup graph
         MazeBall.scene = MazeBall.f.Project.resources["Graph|2021-05-25T15:28:57.816Z|73244"];
         MazeBall.scene.getChildrenByName("Platform").forEach(platform => platform.addComponent(new MazeBall.ComponentPlatform()));
+        MazeBall.scene.getChildrenByName("FinalPlatform")[0].addComponent(new MazeBall.ComponentPlatform(true));
         MazeBall.scene.getChildrenByName("Ball")[0].addComponent(new MazeBall.ComponentBall());
         MazeBall.scene.getChildrenByName("Platform")[1].getChildrenByName("Wall")[0].addComponent(new MazeBall.ComponentMovingWall(5, 5, MazeBall.f.Vector3.X()));
         MazeBall.f.Debug.log("Scene:", MazeBall.scene);
@@ -221,13 +257,11 @@ var MazeBall;
             ];
             this.onGameStart = (_event) => {
                 this.controlledPlatform = MazeBall.scene.getChildrenByName("Platform")[0];
-                MazeBall.f.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update);
                 window.addEventListener("keydown", this.onKeyboardDown);
                 MazeBall.canvas.addEventListener("mousemove", this.handleMouse);
                 MazeBall.canvas.addEventListener("wheel", this.handleWheel);
             };
             this.onGameEnd = (_event) => {
-                MazeBall.f.Loop.removeEventListener("loopFrame" /* LOOP_FRAME */, this.update);
                 window.removeEventListener("keydown", this.onKeyboardDown);
                 MazeBall.canvas.removeEventListener("mousemove", this.handleMouse);
                 MazeBall.canvas.removeEventListener("wheel", this.handleWheel);
@@ -260,6 +294,7 @@ var MazeBall;
             this.addChild(this.turnTable);
             MazeBall.game.addEventListener(MazeBall.Game.start, this.onGameStart);
             MazeBall.game.addEventListener(MazeBall.Game.end, this.onGameEnd);
+            MazeBall.f.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update);
         }
         static get instance() {
             if (this._instance == undefined)
