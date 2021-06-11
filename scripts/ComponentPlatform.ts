@@ -33,8 +33,8 @@ namespace MazeBall {
     }
 
     private swapControl(): void {
-      if (controlledPlatform != this.getContainer().mtxLocal) {
-        controlledPlatform = this.getContainer().mtxLocal;
+      if (PlayerControl.instance.controlledPlatform != this.getContainer()) {
+        PlayerControl.instance.controlledPlatform = this.getContainer();
         ComponentPlatform.swapControlAudio.play(true);
       }
     }

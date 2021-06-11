@@ -14,6 +14,7 @@ var MazeBall;
     }
     MazeBall.ComponentScript = ComponentScript;
 })(MazeBall || (MazeBall = {}));
+///<reference path="scripts/ComponentScript.ts"/>
 ///<reference path="ComponentScript.ts"/>
 var MazeBall;
 ///<reference path="ComponentScript.ts"/>
@@ -118,8 +119,8 @@ var MazeBall;
             });
         }
         swapControl() {
-            if (MazeBall.controlledPlatform != this.getContainer().mtxLocal) {
-                MazeBall.controlledPlatform = this.getContainer().mtxLocal;
+            if (MazeBall.PlayerControl.instance.controlledPlatform != this.getContainer()) {
+                MazeBall.PlayerControl.instance.controlledPlatform = this.getContainer();
                 ComponentPlatform.swapControlAudio.play(true);
             }
         }
@@ -129,12 +130,44 @@ var MazeBall;
 })(MazeBall || (MazeBall = {}));
 var MazeBall;
 (function (MazeBall) {
+    class Game extends EventTarget {
+        constructor() {
+            super(...arguments);
+            this._start = new Event(Game.start);
+            this._end = new Event(Game.end);
+        }
+        requestClickToStart() {
+            let startMessage = document.createElement("div");
+            startMessage.className = "blink";
+            startMessage.innerText = "click to start";
+            document.body.appendChild(startMessage);
+            MazeBall.canvas.addEventListener("click", () => {
+                this.start();
+                MazeBall.canvas.requestPointerLock();
+                document.body.removeChild(startMessage);
+            });
+        }
+        start() {
+            this.dispatchEvent(this._start);
+            MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, 120);
+        }
+        end() {
+            this.dispatchEvent(this._end);
+            MazeBall.f.Loop.stop();
+            this.requestClickToStart();
+        }
+    }
+    Game.start = "gamestart";
+    Game.end = "gameend";
+    MazeBall.Game = Game;
+    MazeBall.game = new Game();
+})(MazeBall || (MazeBall = {}));
+var MazeBall;
+(function (MazeBall) {
     let viewport;
-    let canvas;
-    let scene;
     window.addEventListener("load", init);
     async function init() {
-        canvas = document.querySelector("canvas");
+        MazeBall.canvas = document.querySelector("canvas");
         // load resources referenced in the link-tag
         await MazeBall.f.Project.loadResources("./resources/Scene.json");
         MazeBall.f.Debug.log("Project:", MazeBall.f.Project.resources);
@@ -143,57 +176,109 @@ var MazeBall;
         MazeBall.f.Physics.settings.debugMode = MazeBall.f.PHYSICS_DEBUGMODE.COLLIDERS;
         MazeBall.f.Physics.settings.debugDraw = true;
         // setup graph
-        scene = MazeBall.f.Project.resources["Graph|2021-05-25T15:28:57.816Z|73244"];
-        scene.getChildrenByName("Platform").forEach(platform => platform.addComponent(new MazeBall.ComponentPlatform()));
-        scene.getChildrenByName("Ball")[0].addComponent(new MazeBall.ComponentBall());
-        scene.getChildrenByName("Platform")[1].getChildrenByName("Wall")[0].addComponent(new MazeBall.ComponentMovingWall(5, 5, MazeBall.f.Vector3.X()));
-        MazeBall.f.Debug.log("Scene:", scene);
-        // setup camera
-        let camera = new MazeBall.f.ComponentCamera();
-        camera.mtxPivot.translateX(10);
-        camera.mtxPivot.translateY(26);
-        camera.mtxPivot.translateZ(28);
-        camera.mtxPivot.rotateY(180);
-        camera.mtxPivot.rotateX(45);
+        MazeBall.scene = MazeBall.f.Project.resources["Graph|2021-05-25T15:28:57.816Z|73244"];
+        MazeBall.scene.getChildrenByName("Platform").forEach(platform => platform.addComponent(new MazeBall.ComponentPlatform()));
+        MazeBall.scene.getChildrenByName("Ball")[0].addComponent(new MazeBall.ComponentBall());
+        MazeBall.scene.getChildrenByName("Platform")[1].getChildrenByName("Wall")[0].addComponent(new MazeBall.ComponentMovingWall(5, 5, MazeBall.f.Vector3.X()));
+        MazeBall.f.Debug.log("Scene:", MazeBall.scene);
+        // setup player control
+        MazeBall.scene.addChild(MazeBall.PlayerControl.instance);
+        MazeBall.PlayerControl.instance.viewObject = MazeBall.scene.getChildrenByName("Ball")[0];
         // setup viewport
         viewport = new MazeBall.f.Viewport();
-        viewport.initialize("Viewport", scene, camera, canvas);
+        viewport.initialize("Viewport", MazeBall.scene, MazeBall.PlayerControl.instance.camera, MazeBall.canvas);
         MazeBall.f.Debug.log("Viewport:", viewport);
         // setup audio
-        scene.addComponent(MazeBall.ComponentPlatform.swapControlAudio);
+        MazeBall.scene.addComponent(MazeBall.ComponentPlatform.swapControlAudio);
         let cmpListener = new MazeBall.f.ComponentAudioListener();
-        scene.addComponent(cmpListener);
+        MazeBall.scene.addComponent(cmpListener);
         MazeBall.f.AudioManager.default.listenWith(cmpListener);
-        MazeBall.f.AudioManager.default.listenTo(scene);
+        MazeBall.f.AudioManager.default.listenTo(MazeBall.scene);
         MazeBall.f.Debug.log("Audio:", MazeBall.f.AudioManager.default);
-        // setup controll
-        let startMessage = document.createElement("div");
-        startMessage.className = "blink";
-        startMessage.innerText = "click to start";
-        document.body.appendChild(startMessage);
-        canvas.addEventListener("click", () => {
-            document.body.removeChild(startMessage);
-            canvas.requestPointerLock();
-            canvas.addEventListener("mousemove", handleMouse);
-            canvas.addEventListener("wheel", handleWheel);
-        });
-        // start game
-        MazeBall.f.Physics.adjustTransforms(scene, true);
-        //viewport.draw();
+        // setup draw and physic simulation
+        MazeBall.f.Physics.adjustTransforms(MazeBall.scene, true);
         MazeBall.f.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
-        MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, 120);
+        viewport.draw();
+        MazeBall.game.requestClickToStart();
     }
     function update() {
         MazeBall.f.Physics.world.simulate(MazeBall.f.Loop.timeFrameReal / 1000);
         viewport.draw();
     }
-    function handleMouse(_event) {
-        MazeBall.controlledPlatform.rotateX(_event.movementY * 0.05);
-        MazeBall.controlledPlatform.rotateZ(_event.movementX * -0.05);
+})(MazeBall || (MazeBall = {}));
+var MazeBall;
+(function (MazeBall) {
+    class PlayerControl extends MazeBall.f.Node {
+        constructor() {
+            super("PlayerControl");
+            this.rotateLeftKeys = [
+                MazeBall.f.KEYBOARD_CODE.A,
+                MazeBall.f.KEYBOARD_CODE.ARROW_LEFT
+            ];
+            this.rotateRightKeys = [
+                MazeBall.f.KEYBOARD_CODE.D,
+                MazeBall.f.KEYBOARD_CODE.ARROW_RIGHT
+            ];
+            this.onGameStart = (_event) => {
+                this.controlledPlatform = MazeBall.scene.getChildrenByName("Platform")[0];
+                MazeBall.f.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update);
+                window.addEventListener("keydown", this.onKeyboardDown);
+                MazeBall.canvas.addEventListener("mousemove", this.handleMouse);
+                MazeBall.canvas.addEventListener("wheel", this.handleWheel);
+            };
+            this.onGameEnd = (_event) => {
+                MazeBall.f.Loop.removeEventListener("loopFrame" /* LOOP_FRAME */, this.update);
+                window.removeEventListener("keydown", this.onKeyboardDown);
+                MazeBall.canvas.removeEventListener("mousemove", this.handleMouse);
+                MazeBall.canvas.removeEventListener("wheel", this.handleWheel);
+            };
+            this.update = (_event) => {
+                this.move();
+            };
+            this.onKeyboardDown = (_event) => {
+                if (this.rotateLeftKeys.includes(_event.code))
+                    this.rotateLeft();
+                else if (this.rotateRightKeys.includes(_event.code))
+                    this.rotateRight();
+            };
+            this.handleMouse = (_event) => {
+                this.controlledPlatform.mtxLocal.rotateX(_event.movementY * 0.05);
+                this.controlledPlatform.mtxLocal.rotateZ(_event.movementX * -0.05);
+            };
+            this.handleWheel = (_event) => {
+                this.controlledPlatform.mtxLocal.rotateY(_event.deltaY * 0.05);
+            };
+            this.addComponent(new MazeBall.f.ComponentTransform());
+            this.turnTable = new MazeBall.f.Node("Camera");
+            this.turnTable.addComponent(new MazeBall.f.ComponentTransform());
+            this.camera = new MazeBall.f.ComponentCamera();
+            this.camera.mtxPivot.translateY(30);
+            this.camera.mtxPivot.translateZ(30);
+            this.camera.mtxPivot.rotateY(180);
+            this.camera.mtxPivot.rotateX(45);
+            this.turnTable.addComponent(this.camera);
+            this.addChild(this.turnTable);
+            MazeBall.game.addEventListener(MazeBall.Game.start, this.onGameStart);
+            MazeBall.game.addEventListener(MazeBall.Game.end, this.onGameEnd);
+        }
+        static get instance() {
+            if (this._instance == undefined)
+                this._instance = new PlayerControl();
+            return this._instance;
+        }
+        move() {
+            let difference = MazeBall.f.Vector3.DIFFERENCE(this.viewObject.mtxLocal.translation, this.mtxLocal.translation);
+            difference.scale(1 / (1 + difference.magnitude));
+            this.mtxLocal.translate(difference);
+        }
+        rotateLeft() {
+            this.turnTable.mtxLocal.rotateY(-90);
+        }
+        rotateRight() {
+            this.turnTable.mtxLocal.rotateY(90);
+        }
     }
-    function handleWheel(_event) {
-        MazeBall.controlledPlatform.rotateY(_event.deltaY * 0.05);
-    }
+    MazeBall.PlayerControl = PlayerControl;
 })(MazeBall || (MazeBall = {}));
 var MazeBall;
 (function (MazeBall) {

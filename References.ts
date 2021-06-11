@@ -1,0 +1,1 @@
+///<reference path="scripts/ComponentScript.ts"/>
