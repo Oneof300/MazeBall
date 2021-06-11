@@ -22,6 +22,7 @@ namespace MazeBall {
     // setup graph
     scene = f.Project.resources["Graph|2021-05-25T15:28:57.816Z|73244"] as f.Graph;
     scene.getChildrenByName("Platform").forEach(platform => platform.addComponent(new ComponentPlatform()));
+    scene.getChildrenByName("FinalPlatform")[0].addComponent(new ComponentPlatform(true));
     scene.getChildrenByName("Ball")[0].addComponent(new ComponentBall());
 
     scene.getChildrenByName("Platform")[1].getChildrenByName("Wall")[0].addComponent(new ComponentMovingWall(5, 5, f.Vector3.X()));
@@ -55,5 +56,5 @@ namespace MazeBall {
     f.Physics.world.simulate(f.Loop.timeFrameReal / 1000);
     viewport.draw();
   }
-  
+
 }

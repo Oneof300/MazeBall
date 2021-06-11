@@ -37,6 +37,7 @@ namespace MazeBall {
 
       game.addEventListener(Game.start, this.onGameStart);
       game.addEventListener(Game.end, this.onGameEnd);
+      f.Loop.addEventListener(f.EVENT.LOOP_FRAME, this.update);
     }
 
     public static get instance(): PlayerControl {
@@ -46,14 +47,12 @@ namespace MazeBall {
 
     private onGameStart = (_event: Event) => {
       this.controlledPlatform = scene.getChildrenByName("Platform")[0];
-      f.Loop.addEventListener(f.EVENT.LOOP_FRAME, this.update);
       window.addEventListener("keydown", this.onKeyboardDown);
       canvas.addEventListener("mousemove", this.handleMouse);
       canvas.addEventListener("wheel", this.handleWheel);
     }
 
     private onGameEnd = (_event: Event) => {
-      f.Loop.removeEventListener(f.EVENT.LOOP_FRAME, this.update);
       window.removeEventListener("keydown", this.onKeyboardDown);
       canvas.removeEventListener("mousemove", this.handleMouse);
       canvas.removeEventListener("wheel", this.handleWheel);

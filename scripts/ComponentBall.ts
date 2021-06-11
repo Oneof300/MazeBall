@@ -14,6 +14,15 @@ namespace MazeBall {
       let body: f.ComponentRigidbody = new f.ComponentRigidbody(20, f.PHYSICS_TYPE.DYNAMIC, f.COLLIDER_TYPE.SPHERE);
       body.addEventListener(f.EVENT_PHYSICS.COLLISION_ENTER, this.onCollision);
       node.addComponent(body);
+
+      game.addEventListener(Game.reset, this.onGameReset);
+    }
+
+    private onGameReset = (_event: Event) => {
+      let body: f.ComponentRigidbody = this.getContainer().getComponent(f.ComponentRigidbody);
+      body.setVelocity(f.Vector3.ZERO());
+      body.setAngularVelocity(f.Vector3.ZERO());
+      body.setPosition(f.Vector3.Y(3));
     }
 
     private onCollision = (_event: f.EventPhysics) => {
