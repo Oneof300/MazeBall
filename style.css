@@ -64,6 +64,6 @@ div {
 }
 
 @keyframes blink-animation {
-  from { opacity: 0; }
+  from { opacity: 0.25; }
   to   { opacity: 1; }
 }
