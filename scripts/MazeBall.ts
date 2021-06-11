@@ -30,7 +30,7 @@ namespace MazeBall {
     // setup camera
     let camera: f.ComponentCamera = new f.ComponentCamera();
     camera.mtxPivot.translateX(10);
-    camera.mtxPivot.translateY(25);
+    camera.mtxPivot.translateY(26);
     camera.mtxPivot.translateZ(28);
     camera.mtxPivot.rotateY(180);
     camera.mtxPivot.rotateX(45);
@@ -51,8 +51,8 @@ namespace MazeBall {
     // setup controll
     let startMessage: HTMLDivElement = document.createElement("div");
     startMessage.className = "blink";
-    startMessage.innerText = "Click to start";
-    document.body.insertBefore(startMessage, canvas);
+    startMessage.innerText = "click to start";
+    document.body.appendChild(startMessage);
 
     canvas.addEventListener("click", () => {
       document.body.removeChild(startMessage);
