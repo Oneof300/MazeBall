@@ -45,9 +45,10 @@ namespace MazeBall {
     f.AudioManager.default.listenTo(scene);
     f.Debug.log("Audio:", f.AudioManager.default);
 
-    // setup draw and physic simulation
+    // start
     f.Physics.adjustTransforms(scene, true);
     f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
+    f.Loop.start(f.LOOP_MODE.TIME_REAL, Game.fps);
     viewport.draw();
     game.requestClickToStart();
   }

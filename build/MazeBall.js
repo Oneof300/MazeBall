@@ -231,9 +231,10 @@ var MazeBall;
         MazeBall.f.AudioManager.default.listenWith(cmpListener);
         MazeBall.f.AudioManager.default.listenTo(MazeBall.scene);
         MazeBall.f.Debug.log("Audio:", MazeBall.f.AudioManager.default);
-        // setup draw and physic simulation
+        // start
         MazeBall.f.Physics.adjustTransforms(MazeBall.scene, true);
         MazeBall.f.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
+        MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, MazeBall.Game.fps);
         viewport.draw();
         MazeBall.game.requestClickToStart();
     }
