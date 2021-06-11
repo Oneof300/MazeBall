@@ -45,7 +45,42 @@ declare namespace MazeBall {
     }
 }
 declare namespace MazeBall {
-    let controlledPlatform: f.Matrix4x4;
+    class Game extends EventTarget {
+        static readonly start: string;
+        static readonly end: string;
+        private _start;
+        private _end;
+        requestClickToStart(): void;
+        start(): void;
+        end(): void;
+    }
+    const game: Game;
+}
+declare namespace MazeBall {
+    let canvas: HTMLCanvasElement;
+    let scene: f.Graph;
+}
+declare namespace MazeBall {
+    class PlayerControl extends f.Node {
+        private static _instance;
+        viewObject: f.Node;
+        controlledPlatform: f.Node;
+        readonly camera: f.ComponentCamera;
+        private readonly rotateLeftKeys;
+        private readonly rotateRightKeys;
+        private readonly turnTable;
+        private constructor();
+        static get instance(): PlayerControl;
+        private onGameStart;
+        private onGameEnd;
+        private update;
+        private onKeyboardDown;
+        private handleMouse;
+        private handleWheel;
+        private move;
+        private rotateLeft;
+        private rotateRight;
+    }
 }
 declare namespace MazeBall {
     class Projectile extends f.Node {

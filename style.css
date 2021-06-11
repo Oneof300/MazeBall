@@ -57,9 +57,9 @@ div {
 
 .blink {
   position: absolute;
-  top: 35%;
   left: 50%;
-  transform: translate(-35%, -50%);
+  top: 40%;
+  transform: translate(-50%, -40%);
   animation: blink-animation 1s infinite alternate;
 }
 
