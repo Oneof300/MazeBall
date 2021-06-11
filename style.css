@@ -60,6 +60,7 @@ div {
   left: 50%;
   top: 40%;
   transform: translate(-50%, -40%);
+  text-align: center;
   animation: blink-animation 1s infinite alternate;
 }
 
