@@ -49,7 +49,13 @@ namespace MazeBall {
     f.Debug.log("Audio:", f.AudioManager.default);
 
     // setup controll
+    let startMessage: HTMLDivElement = document.createElement("div");
+    startMessage.className = "blink";
+    startMessage.innerText = "Click to start";
+    document.body.insertBefore(startMessage, canvas);
+
     canvas.addEventListener("click", () => {
+      document.body.removeChild(startMessage);
       canvas.requestPointerLock();
       canvas.addEventListener("mousemove", handleMouse);
       canvas.addEventListener("wheel", handleWheel);
@@ -57,7 +63,7 @@ namespace MazeBall {
 
     // start game
     f.Physics.adjustTransforms(scene, true);
-    viewport.draw();
+    //viewport.draw();
     f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
     f.Loop.start(f.LOOP_MODE.TIME_REAL, 120);
   }

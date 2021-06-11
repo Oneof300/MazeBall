@@ -167,14 +167,19 @@ var MazeBall;
         MazeBall.f.AudioManager.default.listenTo(scene);
         MazeBall.f.Debug.log("Audio:", MazeBall.f.AudioManager.default);
         // setup controll
+        let startMessage = document.createElement("div");
+        startMessage.className = "blink";
+        startMessage.innerText = "Click to start";
+        document.body.insertBefore(startMessage, canvas);
         canvas.addEventListener("click", () => {
+            document.body.removeChild(startMessage);
             canvas.requestPointerLock();
             canvas.addEventListener("mousemove", handleMouse);
             canvas.addEventListener("wheel", handleWheel);
         });
         // start game
         MazeBall.f.Physics.adjustTransforms(scene, true);
-        viewport.draw();
+        //viewport.draw();
         MazeBall.f.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, 120);
     }
