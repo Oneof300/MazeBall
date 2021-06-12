@@ -2,6 +2,9 @@
   "fps": 120,
   "tiltSpeed": 0.05,
   "rotateSpeed": 0.05,
+  "ballMass": 10,
+  "cannonStrength": 3000,
+  "projectileMass": 50,
   "debugMode": "COLLIDERS",
   "debugDraw": true
 }

@@ -11,7 +11,7 @@ namespace MazeBall {
       this.ballHitAudio = new f.ComponentAudio(ComponentBall.ballHitAudio);
       node.addComponent(this.ballHitAudio);
 
-      let body: f.ComponentRigidbody = new f.ComponentRigidbody(20, f.PHYSICS_TYPE.DYNAMIC, f.COLLIDER_TYPE.SPHERE);
+      let body: f.ComponentRigidbody = new f.ComponentRigidbody(gameSettings.ballMass, f.PHYSICS_TYPE.DYNAMIC, f.COLLIDER_TYPE.SPHERE);
       body.addEventListener(f.EVENT_PHYSICS.COLLISION_ENTER, this.onCollision);
       node.addComponent(body);
 

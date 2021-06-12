@@ -28,7 +28,7 @@ namespace MazeBall {
       
       node.getChildrenByName("Cannon").forEach(cannon => {
         cannon.addComponent(new f.ComponentRigidbody(0, f.PHYSICS_TYPE.KINEMATIC, f.COLLIDER_TYPE.CUBE));
-        cannon.addComponent(new ComponentCannon(f.Vector3.Z(6), new f.Vector3(5, 10, 5)));
+        cannon.addComponent(new ComponentCannon(f.Vector3.Z(8.5), new f.Vector3(4, 4, 14)));
       });
 
       this.startPosition = this.getContainer().mtxLocal.translation;

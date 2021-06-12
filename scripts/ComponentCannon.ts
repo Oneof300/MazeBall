@@ -1,8 +1,6 @@
 namespace MazeBall {
   export class ComponentCannon extends ComponentScript {
 
-    readonly strength: number = 100;
-
     private trigger: Trigger;
     private projectile: Projectile;
 
@@ -22,13 +20,16 @@ namespace MazeBall {
     }
 
     private onTriggerEnter = (_event: f.EventPhysics) => {
-      if (_event.cmpRigidbody.getContainer().name == "Ball") this.fire();
+      const other: f.Node = _event.cmpRigidbody.getContainer();
+      if (other.name == "Ball") this.fire(other);
     }
 
-    private fire(): void {
+    private fire(_target: f.Node): void {
       console.log("fire");
-      const mtxLocal: f.Matrix4x4 = this.getContainer().mtxLocal;
-      this.projectile.fire(f.Vector3.ZERO(), f.Vector3.SCALE(mtxLocal.getZ(), this.strength));
+      const mtxWorld: f.Matrix4x4 = this.getContainer().mtxWorld;
+      const distanceToTarget: number = f.Vector3.DIFFERENCE(mtxWorld.translation, _target.mtxWorld.translation).magnitude;
+      this.projectile.fire(f.Vector3.SUM(mtxWorld.translation, f.Vector3.Z(2)),
+                           f.Vector3.SCALE(mtxWorld.getZ(), gameSettings.cannonStrength * distanceToTarget));
     }
 
   }

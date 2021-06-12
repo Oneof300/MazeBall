@@ -37,7 +37,7 @@ var MazeBall;
             let node = this.getContainer();
             this.ballHitAudio = new MazeBall.f.ComponentAudio(ComponentBall.ballHitAudio);
             node.addComponent(this.ballHitAudio);
-            let body = new MazeBall.f.ComponentRigidbody(20, MazeBall.f.PHYSICS_TYPE.DYNAMIC, MazeBall.f.COLLIDER_TYPE.SPHERE);
+            let body = new MazeBall.f.ComponentRigidbody(MazeBall.gameSettings.ballMass, MazeBall.f.PHYSICS_TYPE.DYNAMIC, MazeBall.f.COLLIDER_TYPE.SPHERE);
             body.addEventListener("ColliderEnteredCollision" /* COLLISION_ENTER */, this.onCollision);
             node.addComponent(body);
             MazeBall.game.addEventListener(MazeBall.EVENT_GAME.RESET, this.onGameReset);
@@ -51,10 +51,10 @@ var MazeBall;
     class ComponentCannon extends MazeBall.ComponentScript {
         constructor(_triggerOffset, _triggerSize) {
             super();
-            this.strength = 100;
             this.onTriggerEnter = (_event) => {
-                if (_event.cmpRigidbody.getContainer().name == "Ball")
-                    this.fire();
+                const other = _event.cmpRigidbody.getContainer();
+                if (other.name == "Ball")
+                    this.fire(other);
             };
             this.singleton = true;
             this.trigger = new MazeBall.Trigger(_triggerOffset, _triggerSize);
@@ -65,10 +65,11 @@ var MazeBall;
             this.getContainer().addChild(this.trigger);
             this.getContainer().addChild(this.projectile);
         }
-        fire() {
+        fire(_target) {
             console.log("fire");
-            const mtxLocal = this.getContainer().mtxLocal;
-            this.projectile.fire(MazeBall.f.Vector3.ZERO(), MazeBall.f.Vector3.SCALE(mtxLocal.getZ(), this.strength));
+            const mtxWorld = this.getContainer().mtxWorld;
+            const distanceToTarget = MazeBall.f.Vector3.DIFFERENCE(mtxWorld.translation, _target.mtxWorld.translation).magnitude;
+            this.projectile.fire(MazeBall.f.Vector3.SUM(mtxWorld.translation, MazeBall.f.Vector3.Z(2)), MazeBall.f.Vector3.SCALE(mtxWorld.getZ(), MazeBall.gameSettings.cannonStrength * distanceToTarget));
         }
     }
     MazeBall.ComponentCannon = ComponentCannon;
@@ -130,7 +131,7 @@ var MazeBall;
             });
             node.getChildrenByName("Cannon").forEach(cannon => {
                 cannon.addComponent(new MazeBall.f.ComponentRigidbody(0, MazeBall.f.PHYSICS_TYPE.KINEMATIC, MazeBall.f.COLLIDER_TYPE.CUBE));
-                cannon.addComponent(new MazeBall.ComponentCannon(MazeBall.f.Vector3.Z(6), new MazeBall.f.Vector3(5, 10, 5)));
+                cannon.addComponent(new MazeBall.ComponentCannon(MazeBall.f.Vector3.Z(8.5), new MazeBall.f.Vector3(4, 4, 14)));
             });
             this.startPosition = this.getContainer().mtxLocal.translation;
             MazeBall.game.addEventListener(MazeBall.EVENT_GAME.RESET, this.onGameReset);
@@ -332,18 +333,19 @@ var MazeBall;
     class Projectile extends MazeBall.f.Node {
         constructor() {
             super("Projectile");
-            let cmpMesh = new MazeBall.f.ComponentMesh(MazeBall.f.Project.resources["MeshSphere|2021-05-25T15:26:35.712Z|33287"]);
-            cmpMesh.mtxPivot.scale(MazeBall.f.Vector3.ONE(0.5));
-            this.addComponent(cmpMesh);
-            this.addComponent(new MazeBall.f.ComponentTransform());
-            this.body = new MazeBall.f.ComponentRigidbody(20, MazeBall.f.PHYSICS_TYPE.STATIC, MazeBall.f.COLLIDER_TYPE.SPHERE, MazeBall.f.PHYSICS_GROUP.TRIGGER);
+            this.addComponent(new MazeBall.f.ComponentMesh(MazeBall.f.Project.resources["MeshSphere|2021-05-25T15:26:35.712Z|33287"]));
+            this.addComponent(new MazeBall.f.ComponentMaterial(MazeBall.f.Project.resources["Material|2021-05-25T15:28:46.097Z|64234"]));
+            this.addComponent(new MazeBall.f.ComponentTransform(MazeBall.f.Matrix4x4.SCALING(MazeBall.f.Vector3.ONE(0.5))));
+            this.body = new MazeBall.f.ComponentRigidbody(MazeBall.gameSettings.projectileMass, MazeBall.f.PHYSICS_TYPE.STATIC, MazeBall.f.COLLIDER_TYPE.SPHERE, MazeBall.f.PHYSICS_GROUP.DEFAULT, this.mtxLocal);
             this.addComponent(this.body);
             this.activate(false);
         }
         fire(_pos, _force) {
-            this.mtxLocal.translate(MazeBall.f.Vector3.DIFFERENCE(_pos, this.mtxLocal.translation));
             this.activate(true);
             this.body.physicsType = MazeBall.f.PHYSICS_TYPE.DYNAMIC;
+            this.body.setVelocity(MazeBall.f.Vector3.ZERO());
+            this.body.setAngularVelocity(MazeBall.f.Vector3.ZERO());
+            this.body.setPosition(_pos);
             this.body.applyForce(_force);
         }
     }

@@ -16,7 +16,6 @@ declare namespace MazeBall {
 }
 declare namespace MazeBall {
     class ComponentCannon extends ComponentScript {
-        readonly strength: number;
         private trigger;
         private projectile;
         constructor(_triggerOffset: f.Vector3, _triggerSize: f.Vector3);
@@ -58,6 +57,9 @@ declare namespace MazeBall {
         fps: number;
         tiltSpeed: number;
         rotateSpeed: number;
+        ballMass: number;
+        cannonStrength: number;
+        projectileMass: number;
         debugMode: string;
         debugDraw: boolean;
     }

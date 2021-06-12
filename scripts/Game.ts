@@ -11,6 +11,9 @@ namespace MazeBall {
     fps: number;
     tiltSpeed: number;
     rotateSpeed: number;
+    ballMass: number;
+    cannonStrength: number;
+    projectileMass: number;
     debugMode: string;
     debugDraw: boolean;
 
