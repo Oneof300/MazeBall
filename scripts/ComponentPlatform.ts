@@ -32,7 +32,7 @@ namespace MazeBall {
       });
 
       this.startPosition = this.getContainer().mtxLocal.translation;
-      game.addEventListener(Game.reset, this.onGameReset);
+      game.addEventListener(EVENT_GAME.RESET, this.onGameReset);
     }
 
     protected onFloorCollisionEnter = (_event: f.EventPhysics) => {
@@ -47,8 +47,8 @@ namespace MazeBall {
     }
 
     private swapControl(): void {
-      if (PlayerControl.instance.controlledPlatform != this.getContainer()) {
-        PlayerControl.instance.controlledPlatform = this.getContainer();
+      if (playerControl.controlledPlatform != this.getContainer()) {
+        playerControl.controlledPlatform = this.getContainer();
         ComponentPlatform.swapControlAudio.play(true);
       }
     }

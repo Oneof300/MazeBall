@@ -1,7 +1,5 @@
 namespace MazeBall {
-  export class PlayerControl extends f.Node {
-
-    private static _instance: PlayerControl;
+  class PlayerControl extends f.Node {
 
     viewObject: f.Node;
     controlledPlatform: f.Node;
@@ -19,7 +17,7 @@ namespace MazeBall {
 
     private readonly turnTable: f.Node;
 
-    private constructor() {
+    constructor() {
       super("PlayerControl");
       this.addComponent(new f.ComponentTransform());
       
@@ -35,14 +33,9 @@ namespace MazeBall {
 
       this.addChild(this.turnTable);
 
-      game.addEventListener(Game.start, this.onGameStart);
-      game.addEventListener(Game.end, this.onGameEnd);
+      game.addEventListener(EVENT_GAME.START, this.onGameStart);
+      game.addEventListener(EVENT_GAME.END, this.onGameEnd);
       f.Loop.addEventListener(f.EVENT.LOOP_FRAME, this.update);
-    }
-
-    public static get instance(): PlayerControl {
-      if (this._instance == undefined) this._instance = new PlayerControl();
-      return this._instance;
     }
 
     private onGameStart = (_event: Event) => {
@@ -90,4 +83,6 @@ namespace MazeBall {
       this.turnTable.mtxLocal.rotateY(90);
     }
   }
+
+  export const playerControl: PlayerControl = new PlayerControl();
 }

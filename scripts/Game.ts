@@ -1,15 +1,24 @@
 namespace MazeBall {
-  export class Game extends EventTarget {
 
-    static readonly fps: number = 120;
+  export enum EVENT_GAME {
+    START = "gamestart",
+    END = "gameend",
+    RESET = "gamereset"
+  }
 
-    static readonly start: string = "gamestart";
-    static readonly end: string = "gameend";
-    static readonly reset: string = "gamereset";
+  interface GameSettings {
+
+    fps: number;
+
+  }
+
+  export let gameSettings: GameSettings;
+
+  class Game extends EventTarget {
     
-    private readonly eventStart: Event = new Event(Game.start);
-    private readonly eventEnd: Event = new Event(Game.end);
-    private readonly eventReset: Event = new Event(Game.reset);
+    private readonly eventStart: Event = new Event(EVENT_GAME.START);
+    private readonly eventEnd: Event = new Event(EVENT_GAME.END);
+    private readonly eventReset: Event = new Event(EVENT_GAME.RESET);
 
     private isFinished: boolean = false;
 
@@ -42,7 +51,7 @@ namespace MazeBall {
       this.dispatchEvent(this.eventReset);
 
       this.requestClickToStart();
-      f.Loop.start(f.LOOP_MODE.TIME_REAL, Game.fps);
+      f.Loop.start(f.LOOP_MODE.TIME_REAL, gameSettings.fps);
     }
 
     private start = () => {
@@ -53,10 +62,11 @@ namespace MazeBall {
       
       this.dispatchEvent(this.eventStart);
 
-      f.Loop.start(f.LOOP_MODE.TIME_REAL, Game.fps);
+      f.Loop.start(f.LOOP_MODE.TIME_REAL, gameSettings.fps);
     }
 
   }
 
   export const game: Game = new Game();
+
 }

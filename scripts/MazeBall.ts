@@ -29,12 +29,12 @@ namespace MazeBall {
     f.Debug.log("Scene:", scene);
 
     // setup player control
-    scene.addChild(PlayerControl.instance);
-    PlayerControl.instance.viewObject = scene.getChildrenByName("Ball")[0];
+    scene.addChild(playerControl);
+    playerControl.viewObject = scene.getChildrenByName("Ball")[0];
 
     // setup viewport
     viewport = new f.Viewport();
-    viewport.initialize("Viewport", scene, PlayerControl.instance.camera, canvas);
+    viewport.initialize("Viewport", scene, playerControl.camera, canvas);
     f.Debug.log("Viewport:", viewport);
 
     // setup audio
@@ -48,7 +48,7 @@ namespace MazeBall {
     // start
     f.Physics.adjustTransforms(scene, true);
     f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
-    f.Loop.start(f.LOOP_MODE.TIME_REAL, Game.fps);
+    f.Loop.start(f.LOOP_MODE.TIME_REAL, gameSettings.fps);
     viewport.draw();
     game.requestClickToStart();
   }
