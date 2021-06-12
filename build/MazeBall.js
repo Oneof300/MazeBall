@@ -155,11 +155,12 @@ var MazeBall;
     })(EVENT_GAME = MazeBall.EVENT_GAME || (MazeBall.EVENT_GAME = {}));
     class Game extends EventTarget {
         constructor() {
-            super(...arguments);
+            super();
             this.eventStart = new Event(EVENT_GAME.START);
             this.eventEnd = new Event(EVENT_GAME.END);
             this.eventReset = new Event(EVENT_GAME.RESET);
             this.isFinished = false;
+            this.timePassed = new Date(0);
             this.reset = () => {
                 if (!this.isFinished)
                     this.finish(false);
@@ -177,6 +178,17 @@ var MazeBall;
                 this.dispatchEvent(this.eventStart);
                 MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, MazeBall.gameSettings.fps);
             };
+            this.update = () => {
+                this.timePassed = new Date(MazeBall.f.Time.game.get() - MazeBall.f.Loop.timeStartReal);
+                this.clock.innerText = this.timePassed.getMinutes() + ":"
+                    + this.timePassed.getSeconds().toLocaleString("en", { minimumIntegerDigits: 2 }) + ":"
+                    + this.timePassed.getMilliseconds().toLocaleString("en", { minimumIntegerDigits: 3 });
+            };
+            window.addEventListener("load", () => {
+                this.clock = document.getElementById("clock");
+                this.clock.innerText = "0:00:000";
+                MazeBall.f.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update);
+            });
         }
         requestClickToStart() {
             let message = document.getElementById("message");

@@ -67,10 +67,14 @@ declare namespace MazeBall {
         private readonly eventEnd;
         private readonly eventReset;
         private isFinished;
+        private timePassed;
+        private clock;
+        constructor();
         requestClickToStart(): void;
         finish(_solved?: boolean): void;
         reset: () => void;
         private start;
+        private update;
     }
     export const game: Game;
     export {};

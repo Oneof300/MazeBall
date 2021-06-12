@@ -25,6 +25,17 @@ namespace MazeBall {
     private readonly eventReset: Event = new Event(EVENT_GAME.RESET);
 
     private isFinished: boolean = false;
+    private timePassed: Date = new Date(0);
+    private clock: HTMLElement;
+
+    constructor() {
+      super();
+      window.addEventListener("load", () => {
+        this.clock = document.getElementById("clock");
+        this.clock.innerText = "0:00:000";
+        f.Loop.addEventListener(f.EVENT.LOOP_FRAME, this.update);
+      });
+    }
 
     requestClickToStart(): void {
       let message: HTMLElement = document.getElementById("message");
@@ -67,6 +78,13 @@ namespace MazeBall {
       this.dispatchEvent(this.eventStart);
 
       f.Loop.start(f.LOOP_MODE.TIME_REAL, gameSettings.fps);
+    }
+
+    private update = () => {
+      this.timePassed = new Date(f.Time.game.get() - f.Loop.timeStartReal);
+      this.clock.innerText = this.timePassed.getMinutes() + ":" 
+        + this.timePassed.getSeconds().toLocaleString("en", {minimumIntegerDigits: 2}) + ":"
+        + this.timePassed.getMilliseconds().toLocaleString("en", {minimumIntegerDigits: 3});
     }
 
   }
