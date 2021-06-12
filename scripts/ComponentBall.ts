@@ -15,7 +15,7 @@ namespace MazeBall {
       body.addEventListener(f.EVENT_PHYSICS.COLLISION_ENTER, this.onCollision);
       node.addComponent(body);
 
-      game.addEventListener(Game.reset, this.onGameReset);
+      game.addEventListener(EVENT_GAME.RESET, this.onGameReset);
     }
 
     private onGameReset = (_event: Event) => {

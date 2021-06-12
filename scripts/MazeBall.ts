@@ -14,10 +14,14 @@ namespace MazeBall {
     await f.Project.loadResourcesFromHTML();
     f.Debug.log("Project:", f.Project.resources);
 
+    // load game settings
+    let response: Response = await fetch("./../resources/GameSettings.json");
+    gameSettings = await response.json();
+
     // initialize physics
     f.Physics.initializePhysics();
-    f.Physics.settings.debugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
-    f.Physics.settings.debugDraw = true;
+    f.Physics.settings.debugMode = (<any>f.PHYSICS_DEBUGMODE)[gameSettings.debugMode];
+    f.Physics.settings.debugDraw = gameSettings.debugDraw;
 
     // setup graph
     scene = f.Project.resources["Graph|2021-05-25T15:28:57.816Z|73244"] as f.Graph;
@@ -50,6 +54,7 @@ namespace MazeBall {
     f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
     f.Loop.start(f.LOOP_MODE.TIME_REAL, gameSettings.fps);
     viewport.draw();
+    
     game.requestClickToStart();
   }
 

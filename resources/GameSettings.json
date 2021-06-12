@@ -1,0 +1,7 @@
+{
+  "fps": 120,
+  "tiltSpeed": 0.05,
+  "rotateSpeed": 0.05,
+  "debugMode": "COLLIDERS",
+  "debugDraw": true
+}

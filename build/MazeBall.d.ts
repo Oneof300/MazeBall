@@ -49,11 +49,20 @@ declare namespace MazeBall {
     }
 }
 declare namespace MazeBall {
+    export enum EVENT_GAME {
+        START = "gamestart",
+        END = "gameend",
+        RESET = "gamereset"
+    }
+    interface GameSettings {
+        fps: number;
+        tiltSpeed: number;
+        rotateSpeed: number;
+        debugMode: string;
+        debugDraw: boolean;
+    }
+    export let gameSettings: GameSettings;
     class Game extends EventTarget {
-        static readonly fps: number;
-        static readonly start: string;
-        static readonly end: string;
-        static readonly reset: string;
         private readonly eventStart;
         private readonly eventEnd;
         private readonly eventReset;
@@ -63,7 +72,8 @@ declare namespace MazeBall {
         reset: () => void;
         private start;
     }
-    const game: Game;
+    export const game: Game;
+    export {};
 }
 declare namespace MazeBall {
     let canvas: HTMLCanvasElement;
@@ -71,25 +81,25 @@ declare namespace MazeBall {
 }
 declare namespace MazeBall {
     class PlayerControl extends f.Node {
-        private static _instance;
         viewObject: f.Node;
         controlledPlatform: f.Node;
         readonly camera: f.ComponentCamera;
         private readonly rotateLeftKeys;
         private readonly rotateRightKeys;
         private readonly turnTable;
-        private constructor();
-        static get instance(): PlayerControl;
+        constructor();
         private onGameStart;
         private onGameEnd;
         private update;
         private onKeyboardDown;
-        private handleMouse;
-        private handleWheel;
+        private onMouseMove;
+        private onWheel;
         private move;
         private rotateLeft;
         private rotateRight;
     }
+    export const playerControl: PlayerControl;
+    export {};
 }
 declare namespace MazeBall {
     class Projectile extends f.Node {

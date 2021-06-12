@@ -40,7 +40,7 @@ var MazeBall;
             let body = new MazeBall.f.ComponentRigidbody(20, MazeBall.f.PHYSICS_TYPE.DYNAMIC, MazeBall.f.COLLIDER_TYPE.SPHERE);
             body.addEventListener("ColliderEnteredCollision" /* COLLISION_ENTER */, this.onCollision);
             node.addComponent(body);
-            MazeBall.game.addEventListener(MazeBall.Game.reset, this.onGameReset);
+            MazeBall.game.addEventListener(MazeBall.EVENT_GAME.RESET, this.onGameReset);
         }
     }
     ComponentBall.ballHitAudio = new MazeBall.f.Audio("./resources/sounds/ball_hit.mp3");
@@ -133,11 +133,11 @@ var MazeBall;
                 cannon.addComponent(new MazeBall.ComponentCannon(MazeBall.f.Vector3.Z(6), new MazeBall.f.Vector3(5, 10, 5)));
             });
             this.startPosition = this.getContainer().mtxLocal.translation;
-            MazeBall.game.addEventListener(MazeBall.Game.reset, this.onGameReset);
+            MazeBall.game.addEventListener(MazeBall.EVENT_GAME.RESET, this.onGameReset);
         }
         swapControl() {
-            if (MazeBall.PlayerControl.instance.controlledPlatform != this.getContainer()) {
-                MazeBall.PlayerControl.instance.controlledPlatform = this.getContainer();
+            if (MazeBall.playerControl.controlledPlatform != this.getContainer()) {
+                MazeBall.playerControl.controlledPlatform = this.getContainer();
                 ComponentPlatform.swapControlAudio.play(true);
             }
         }
@@ -147,12 +147,18 @@ var MazeBall;
 })(MazeBall || (MazeBall = {}));
 var MazeBall;
 (function (MazeBall) {
+    let EVENT_GAME;
+    (function (EVENT_GAME) {
+        EVENT_GAME["START"] = "gamestart";
+        EVENT_GAME["END"] = "gameend";
+        EVENT_GAME["RESET"] = "gamereset";
+    })(EVENT_GAME = MazeBall.EVENT_GAME || (MazeBall.EVENT_GAME = {}));
     class Game extends EventTarget {
         constructor() {
             super(...arguments);
-            this.eventStart = new Event(Game.start);
-            this.eventEnd = new Event(Game.end);
-            this.eventReset = new Event(Game.reset);
+            this.eventStart = new Event(EVENT_GAME.START);
+            this.eventEnd = new Event(EVENT_GAME.END);
+            this.eventReset = new Event(EVENT_GAME.RESET);
             this.isFinished = false;
             this.reset = () => {
                 if (!this.isFinished)
@@ -161,7 +167,7 @@ var MazeBall;
                     MazeBall.canvas.removeEventListener("click", this.reset);
                 this.dispatchEvent(this.eventReset);
                 this.requestClickToStart();
-                MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, Game.fps);
+                MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, MazeBall.gameSettings.fps);
             };
             this.start = () => {
                 this.isFinished = false;
@@ -169,7 +175,7 @@ var MazeBall;
                 MazeBall.canvas.removeEventListener("click", this.start);
                 MazeBall.canvas.requestPointerLock();
                 this.dispatchEvent(this.eventStart);
-                MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, Game.fps);
+                MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, MazeBall.gameSettings.fps);
             };
         }
         requestClickToStart() {
@@ -190,11 +196,6 @@ var MazeBall;
             MazeBall.f.Loop.stop();
         }
     }
-    Game.fps = 120;
-    Game.start = "gamestart";
-    Game.end = "gameend";
-    Game.reset = "gamereset";
-    MazeBall.Game = Game;
     MazeBall.game = new Game();
 })(MazeBall || (MazeBall = {}));
 var MazeBall;
@@ -206,10 +207,13 @@ var MazeBall;
         // load resources referenced in the link-tag
         await MazeBall.f.Project.loadResourcesFromHTML();
         MazeBall.f.Debug.log("Project:", MazeBall.f.Project.resources);
+        // load game settings
+        let response = await fetch("./../resources/GameSettings.json");
+        MazeBall.gameSettings = await response.json();
         // initialize physics
         MazeBall.f.Physics.initializePhysics();
-        MazeBall.f.Physics.settings.debugMode = MazeBall.f.PHYSICS_DEBUGMODE.COLLIDERS;
-        MazeBall.f.Physics.settings.debugDraw = true;
+        MazeBall.f.Physics.settings.debugMode = MazeBall.f.PHYSICS_DEBUGMODE[MazeBall.gameSettings.debugMode];
+        MazeBall.f.Physics.settings.debugDraw = MazeBall.gameSettings.debugDraw;
         // setup graph
         MazeBall.scene = MazeBall.f.Project.resources["Graph|2021-05-25T15:28:57.816Z|73244"];
         MazeBall.scene.getChildrenByName("Platform").forEach(platform => platform.addComponent(new MazeBall.ComponentPlatform()));
@@ -218,11 +222,11 @@ var MazeBall;
         MazeBall.scene.getChildrenByName("Platform")[1].getChildrenByName("Wall")[0].addComponent(new MazeBall.ComponentMovingWall(5, 5, MazeBall.f.Vector3.X()));
         MazeBall.f.Debug.log("Scene:", MazeBall.scene);
         // setup player control
-        MazeBall.scene.addChild(MazeBall.PlayerControl.instance);
-        MazeBall.PlayerControl.instance.viewObject = MazeBall.scene.getChildrenByName("Ball")[0];
+        MazeBall.scene.addChild(MazeBall.playerControl);
+        MazeBall.playerControl.viewObject = MazeBall.scene.getChildrenByName("Ball")[0];
         // setup viewport
         viewport = new MazeBall.f.Viewport();
-        viewport.initialize("Viewport", MazeBall.scene, MazeBall.PlayerControl.instance.camera, MazeBall.canvas);
+        viewport.initialize("Viewport", MazeBall.scene, MazeBall.playerControl.camera, MazeBall.canvas);
         MazeBall.f.Debug.log("Viewport:", viewport);
         // setup audio
         MazeBall.scene.addComponent(MazeBall.ComponentPlatform.swapControlAudio);
@@ -234,7 +238,7 @@ var MazeBall;
         // start
         MazeBall.f.Physics.adjustTransforms(MazeBall.scene, true);
         MazeBall.f.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
-        MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, MazeBall.Game.fps);
+        MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, MazeBall.gameSettings.fps);
         viewport.draw();
         MazeBall.game.requestClickToStart();
     }
@@ -259,13 +263,13 @@ var MazeBall;
             this.onGameStart = (_event) => {
                 this.controlledPlatform = MazeBall.scene.getChildrenByName("Platform")[0];
                 window.addEventListener("keydown", this.onKeyboardDown);
-                MazeBall.canvas.addEventListener("mousemove", this.handleMouse);
-                MazeBall.canvas.addEventListener("wheel", this.handleWheel);
+                MazeBall.canvas.addEventListener("mousemove", this.onMouseMove);
+                MazeBall.canvas.addEventListener("wheel", this.onWheel);
             };
             this.onGameEnd = (_event) => {
                 window.removeEventListener("keydown", this.onKeyboardDown);
-                MazeBall.canvas.removeEventListener("mousemove", this.handleMouse);
-                MazeBall.canvas.removeEventListener("wheel", this.handleWheel);
+                MazeBall.canvas.removeEventListener("mousemove", this.onMouseMove);
+                MazeBall.canvas.removeEventListener("wheel", this.onWheel);
             };
             this.update = (_event) => {
                 this.move();
@@ -276,12 +280,12 @@ var MazeBall;
                 else if (this.rotateRightKeys.includes(_event.code))
                     this.rotateRight();
             };
-            this.handleMouse = (_event) => {
-                this.controlledPlatform.mtxLocal.rotateX(_event.movementY * 0.05);
-                this.controlledPlatform.mtxLocal.rotateZ(_event.movementX * -0.05);
+            this.onMouseMove = (_event) => {
+                this.controlledPlatform.mtxLocal.rotateX(_event.movementY * MazeBall.gameSettings.tiltSpeed);
+                this.controlledPlatform.mtxLocal.rotateZ(_event.movementX * -MazeBall.gameSettings.tiltSpeed);
             };
-            this.handleWheel = (_event) => {
-                this.controlledPlatform.mtxLocal.rotateY(_event.deltaY * 0.05);
+            this.onWheel = (_event) => {
+                this.controlledPlatform.mtxLocal.rotateY(_event.deltaY * MazeBall.gameSettings.rotateSpeed);
             };
             this.addComponent(new MazeBall.f.ComponentTransform());
             this.turnTable = new MazeBall.f.Node("Camera");
@@ -293,14 +297,9 @@ var MazeBall;
             this.camera.mtxPivot.rotateX(45);
             this.turnTable.addComponent(this.camera);
             this.addChild(this.turnTable);
-            MazeBall.game.addEventListener(MazeBall.Game.start, this.onGameStart);
-            MazeBall.game.addEventListener(MazeBall.Game.end, this.onGameEnd);
+            MazeBall.game.addEventListener(MazeBall.EVENT_GAME.START, this.onGameStart);
+            MazeBall.game.addEventListener(MazeBall.EVENT_GAME.END, this.onGameEnd);
             MazeBall.f.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update);
-        }
-        static get instance() {
-            if (this._instance == undefined)
-                this._instance = new PlayerControl();
-            return this._instance;
         }
         move() {
             let difference = MazeBall.f.Vector3.DIFFERENCE(this.viewObject.mtxLocal.translation, this.mtxLocal.translation);
@@ -314,7 +313,7 @@ var MazeBall;
             this.turnTable.mtxLocal.rotateY(90);
         }
     }
-    MazeBall.PlayerControl = PlayerControl;
+    MazeBall.playerControl = new PlayerControl();
 })(MazeBall || (MazeBall = {}));
 var MazeBall;
 (function (MazeBall) {

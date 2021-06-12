@@ -9,6 +9,10 @@ namespace MazeBall {
   interface GameSettings {
 
     fps: number;
+    tiltSpeed: number;
+    rotateSpeed: number;
+    debugMode: string;
+    debugDraw: boolean;
 
   }
 
