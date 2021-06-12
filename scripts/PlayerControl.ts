@@ -41,14 +41,14 @@ namespace MazeBall {
     private onGameStart = (_event: Event) => {
       this.controlledPlatform = scene.getChildrenByName("Platform")[0];
       window.addEventListener("keydown", this.onKeyboardDown);
-      canvas.addEventListener("mousemove", this.handleMouse);
-      canvas.addEventListener("wheel", this.handleWheel);
+      canvas.addEventListener("mousemove", this.onMouseMove);
+      canvas.addEventListener("wheel", this.onWheel);
     }
 
     private onGameEnd = (_event: Event) => {
       window.removeEventListener("keydown", this.onKeyboardDown);
-      canvas.removeEventListener("mousemove", this.handleMouse);
-      canvas.removeEventListener("wheel", this.handleWheel);
+      canvas.removeEventListener("mousemove", this.onMouseMove);
+      canvas.removeEventListener("wheel", this.onWheel);
     }
 
     private update = (_event: Event) => {
@@ -60,13 +60,13 @@ namespace MazeBall {
       else if (this.rotateRightKeys.includes(_event.code)) this.rotateRight();
     }
 
-    private handleMouse = (_event: MouseEvent) => {
-      this.controlledPlatform.mtxLocal.rotateX(_event.movementY * 0.05);
-      this.controlledPlatform.mtxLocal.rotateZ(_event.movementX * -0.05);
+    private onMouseMove = (_event: MouseEvent) => {
+      this.controlledPlatform.mtxLocal.rotateX(_event.movementY * gameSettings.tiltSpeed);
+      this.controlledPlatform.mtxLocal.rotateZ(_event.movementX * -gameSettings.tiltSpeed);
     }
   
-    private handleWheel = (_event: WheelEvent) => {
-      this.controlledPlatform.mtxLocal.rotateY(_event.deltaY * 0.05);
+    private onWheel = (_event: WheelEvent) => {
+      this.controlledPlatform.mtxLocal.rotateY(_event.deltaY * gameSettings.rotateSpeed);
     }
 
     private move(): void {
