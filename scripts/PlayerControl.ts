@@ -1,10 +1,8 @@
 namespace MazeBall {
-  export class PlayerControl extends f.Node {
-
-    private static _instance: PlayerControl;
+  class PlayerControl extends f.Node {
 
     viewObject: f.Node;
-    controlledPlatform: f.Node;
+    controlledPlatformTurntable: TurnTable;
     readonly camera: f.ComponentCamera;
 
     private readonly rotateLeftKeys: string[] = [
@@ -19,7 +17,7 @@ namespace MazeBall {
 
     private readonly turnTable: f.Node;
 
-    private constructor() {
+    constructor() {
       super("PlayerControl");
       this.addComponent(new f.ComponentTransform());
       
@@ -35,27 +33,22 @@ namespace MazeBall {
 
       this.addChild(this.turnTable);
 
-      game.addEventListener(Game.start, this.onGameStart);
-      game.addEventListener(Game.end, this.onGameEnd);
+      game.addEventListener(EVENT_GAME.START, this.onGameStart);
+      game.addEventListener(EVENT_GAME.END, this.onGameEnd);
       f.Loop.addEventListener(f.EVENT.LOOP_FRAME, this.update);
     }
 
-    public static get instance(): PlayerControl {
-      if (this._instance == undefined) this._instance = new PlayerControl();
-      return this._instance;
-    }
-
     private onGameStart = (_event: Event) => {
-      this.controlledPlatform = scene.getChildrenByName("Platform")[0];
+      this.controlledPlatformTurntable = scene.getChildrenByName("TurnTable")[0] as TurnTable;
       window.addEventListener("keydown", this.onKeyboardDown);
-      canvas.addEventListener("mousemove", this.handleMouse);
-      canvas.addEventListener("wheel", this.handleWheel);
+      canvas.addEventListener("mousemove", this.onMouseMove);
+      canvas.addEventListener("wheel", this.onWheel);
     }
 
     private onGameEnd = (_event: Event) => {
       window.removeEventListener("keydown", this.onKeyboardDown);
-      canvas.removeEventListener("mousemove", this.handleMouse);
-      canvas.removeEventListener("wheel", this.handleWheel);
+      canvas.removeEventListener("mousemove", this.onMouseMove);
+      canvas.removeEventListener("wheel", this.onWheel);
     }
 
     private update = (_event: Event) => {
@@ -67,17 +60,17 @@ namespace MazeBall {
       else if (this.rotateRightKeys.includes(_event.code)) this.rotateRight();
     }
 
-    private handleMouse = (_event: MouseEvent) => {
-      this.controlledPlatform.mtxLocal.rotateX(_event.movementY * 0.05);
-      this.controlledPlatform.mtxLocal.rotateZ(_event.movementX * -0.05);
+    private onMouseMove = (_event: MouseEvent) => {
+      this.controlledPlatformTurntable.rotateX(_event.movementY * gameSettings.tiltSpeed);
+      this.controlledPlatformTurntable.rotateZ(_event.movementX * -gameSettings.tiltSpeed);
     }
   
-    private handleWheel = (_event: WheelEvent) => {
-      this.controlledPlatform.mtxLocal.rotateY(_event.deltaY * 0.05);
+    private onWheel = (_event: WheelEvent) => {
+      this.controlledPlatformTurntable.rotateY(_event.deltaY * gameSettings.rotateSpeed);
     }
 
     private move(): void {
-      let difference: f.Vector3 = f.Vector3.DIFFERENCE(this.viewObject.mtxLocal.translation, this.mtxLocal.translation);
+      const difference: f.Vector3 = f.Vector3.DIFFERENCE(this.viewObject.mtxLocal.translation, this.mtxLocal.translation);
       difference.scale(1 / (1 + difference.magnitude));
       this.mtxLocal.translate(difference);
     }
@@ -90,4 +83,6 @@ namespace MazeBall {
       this.turnTable.mtxLocal.rotateY(90);
     }
   }
+
+  export const playerControl: PlayerControl = new PlayerControl();
 }

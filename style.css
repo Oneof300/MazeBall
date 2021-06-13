@@ -10,14 +10,14 @@ h1 {
 }
 
 section {
-  margin: 2% 15%;
+  margin: 2vh 20vw;
   font-size: 4vh;
 }
 
 a {
   display: inline-block;
-  margin: 1% 25%;
-  width: 50%;
+  margin: 1vh 25vw;
+  width: 50vw;
   padding: 1%;
 
   color: black;
@@ -55,11 +55,17 @@ div {
   font-size: 4vh;
 }
 
+#clock {
+  position: absolute;
+  right: 10vh;
+  top: 5vh;
+}
+
 .blink {
   position: absolute;
-  left: 50%;
-  top: 40%;
-  transform: translate(-50%, -40%);
+  left: 50vw;
+  top: 40vh;
+  transform: translate(-50%, -50%);
   text-align: center;
   animation: blink-animation 1s infinite alternate;
 }

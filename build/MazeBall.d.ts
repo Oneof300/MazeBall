@@ -16,7 +16,6 @@ declare namespace MazeBall {
 }
 declare namespace MazeBall {
     class ComponentCannon extends ComponentScript {
-        readonly strength: number;
         private trigger;
         private projectile;
         constructor(_triggerOffset: f.Vector3, _triggerSize: f.Vector3);
@@ -39,6 +38,7 @@ declare namespace MazeBall {
 declare namespace MazeBall {
     class ComponentPlatform extends ComponentScript {
         static readonly swapControlAudio: f.ComponentAudio;
+        readonly turnTable: TurnTable;
         private readonly isFinal;
         private startPosition;
         constructor(_final?: boolean);
@@ -49,21 +49,39 @@ declare namespace MazeBall {
     }
 }
 declare namespace MazeBall {
+    export enum EVENT_GAME {
+        START = "gamestart",
+        END = "gameend",
+        RESET = "gamereset"
+    }
+    interface GameSettings {
+        fps: number;
+        tiltSpeed: number;
+        tiltMax: number;
+        rotateSpeed: number;
+        ballMass: number;
+        cannonStrength: number;
+        projectileMass: number;
+        debugMode: string;
+        debugDraw: boolean;
+    }
+    export let gameSettings: GameSettings;
     class Game extends EventTarget {
-        static readonly fps: number;
-        static readonly start: string;
-        static readonly end: string;
-        static readonly reset: string;
         private readonly eventStart;
         private readonly eventEnd;
         private readonly eventReset;
         private isFinished;
+        private timePassed;
+        private clock;
+        constructor();
         requestClickToStart(): void;
         finish(_solved?: boolean): void;
         reset: () => void;
         private start;
+        private update;
     }
-    const game: Game;
+    export const game: Game;
+    export {};
 }
 declare namespace MazeBall {
     let canvas: HTMLCanvasElement;
@@ -71,25 +89,25 @@ declare namespace MazeBall {
 }
 declare namespace MazeBall {
     class PlayerControl extends f.Node {
-        private static _instance;
         viewObject: f.Node;
-        controlledPlatform: f.Node;
+        controlledPlatformTurntable: TurnTable;
         readonly camera: f.ComponentCamera;
         private readonly rotateLeftKeys;
         private readonly rotateRightKeys;
         private readonly turnTable;
-        private constructor();
-        static get instance(): PlayerControl;
+        constructor();
         private onGameStart;
         private onGameEnd;
         private update;
         private onKeyboardDown;
-        private handleMouse;
-        private handleWheel;
+        private onMouseMove;
+        private onWheel;
         private move;
         private rotateLeft;
         private rotateRight;
     }
+    export const playerControl: PlayerControl;
+    export {};
 }
 declare namespace MazeBall {
     class Projectile extends f.Node {
@@ -102,5 +120,17 @@ declare namespace MazeBall {
     class Trigger extends f.Node {
         readonly box: f.ComponentRigidbody;
         constructor(_pos: f.Vector3, _size: f.Vector3);
+    }
+}
+declare namespace MazeBall {
+    class TurnTable extends f.Node {
+        private readonly axisX;
+        private readonly axisY;
+        private readonly axisZ;
+        constructor();
+        addChild(_child: f.Node): void;
+        rotateX(_angleInDegrees: number): void;
+        rotateY(_angleInDegrees: number): void;
+        rotateZ(_angleInDegrees: number): void;
     }
 }
