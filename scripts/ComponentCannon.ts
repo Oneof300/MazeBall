@@ -28,7 +28,7 @@ namespace MazeBall {
       console.log("fire");
       const mtxWorld: f.Matrix4x4 = this.getContainer().mtxWorld;
       const distanceToTarget: number = f.Vector3.DIFFERENCE(mtxWorld.translation, _target.mtxWorld.translation).magnitude;
-      this.projectile.fire(f.Vector3.SUM(mtxWorld.translation, f.Vector3.Z(2)),
+      this.projectile.fire(f.Vector3.SUM(mtxWorld.translation, f.Vector3.SCALE(mtxWorld.getZ(), 2)),
                            f.Vector3.SCALE(mtxWorld.getZ(), gameSettings.cannonStrength * distanceToTarget));
     }
 

@@ -1,8 +1,10 @@
 namespace MazeBall {
   export class ComponentPlatform extends ComponentScript {
   
-    public static readonly swapControlAudio: f.ComponentAudio =
+    static readonly swapControlAudio: f.ComponentAudio =
       new f.ComponentAudio(new f.Audio("./resources/sounds/control_swap.mp3"));
+    
+    readonly turnTable: TurnTable;
 
     private readonly isFinal: boolean;
     private startPosition: f.Vector3;
@@ -11,13 +13,19 @@ namespace MazeBall {
       super();
       this.singleton = true;
       this.isFinal = _final;
+      this.turnTable = new TurnTable();
     }
 
     protected onAdded(_event: Event): void {
-      let node: f.Node = this.getContainer();
+      const node: f.Node = this.getContainer();
+
+      node.getParent().addChild(this.turnTable);
+      this.turnTable.mtxLocal.translate(node.mtxLocal.translation);
+      node.mtxLocal.set(f.Matrix4x4.ROTATION(node.mtxLocal.rotation));
+      this.turnTable.addChild(node);
 
       node.getChildrenByName("Floor").forEach(floor => {
-        let body: f.ComponentRigidbody = new f.ComponentRigidbody(0, f.PHYSICS_TYPE.KINEMATIC, f.COLLIDER_TYPE.CUBE);
+        const body: f.ComponentRigidbody = new f.ComponentRigidbody(0, f.PHYSICS_TYPE.KINEMATIC, f.COLLIDER_TYPE.CUBE);
         body.addEventListener(f.EVENT_PHYSICS.COLLISION_ENTER, this.onFloorCollisionEnter);
         floor.addComponent(body);
       });
@@ -47,8 +55,8 @@ namespace MazeBall {
     }
 
     private swapControl(): void {
-      if (playerControl.controlledPlatform != this.getContainer()) {
-        playerControl.controlledPlatform = this.getContainer();
+      if (playerControl.controlledPlatformTurntable != this.turnTable) {
+        playerControl.controlledPlatformTurntable = this.turnTable;
         ComponentPlatform.swapControlAudio.play(true);
       }
     }

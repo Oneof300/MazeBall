@@ -2,7 +2,7 @@ namespace MazeBall {
   class PlayerControl extends f.Node {
 
     viewObject: f.Node;
-    controlledPlatform: f.Node;
+    controlledPlatformTurntable: TurnTable;
     readonly camera: f.ComponentCamera;
 
     private readonly rotateLeftKeys: string[] = [
@@ -39,7 +39,7 @@ namespace MazeBall {
     }
 
     private onGameStart = (_event: Event) => {
-      this.controlledPlatform = scene.getChildrenByName("Platform")[0];
+      this.controlledPlatformTurntable = scene.getChildrenByName("TurnTable")[0] as TurnTable;
       window.addEventListener("keydown", this.onKeyboardDown);
       canvas.addEventListener("mousemove", this.onMouseMove);
       canvas.addEventListener("wheel", this.onWheel);
@@ -61,16 +61,16 @@ namespace MazeBall {
     }
 
     private onMouseMove = (_event: MouseEvent) => {
-      this.controlledPlatform.mtxLocal.rotateX(_event.movementY * gameSettings.tiltSpeed);
-      this.controlledPlatform.mtxLocal.rotateZ(_event.movementX * -gameSettings.tiltSpeed);
+      this.controlledPlatformTurntable.rotateX(_event.movementY * gameSettings.tiltSpeed);
+      this.controlledPlatformTurntable.rotateZ(_event.movementX * -gameSettings.tiltSpeed);
     }
   
     private onWheel = (_event: WheelEvent) => {
-      this.controlledPlatform.mtxLocal.rotateY(_event.deltaY * gameSettings.rotateSpeed);
+      this.controlledPlatformTurntable.rotateY(_event.deltaY * gameSettings.rotateSpeed);
     }
 
     private move(): void {
-      let difference: f.Vector3 = f.Vector3.DIFFERENCE(this.viewObject.mtxLocal.translation, this.mtxLocal.translation);
+      const difference: f.Vector3 = f.Vector3.DIFFERENCE(this.viewObject.mtxLocal.translation, this.mtxLocal.translation);
       difference.scale(1 / (1 + difference.magnitude));
       this.mtxLocal.translate(difference);
     }

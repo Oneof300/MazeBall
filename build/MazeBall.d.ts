@@ -38,6 +38,7 @@ declare namespace MazeBall {
 declare namespace MazeBall {
     class ComponentPlatform extends ComponentScript {
         static readonly swapControlAudio: f.ComponentAudio;
+        readonly turnTable: TurnTable;
         private readonly isFinal;
         private startPosition;
         constructor(_final?: boolean);
@@ -56,6 +57,7 @@ declare namespace MazeBall {
     interface GameSettings {
         fps: number;
         tiltSpeed: number;
+        tiltMax: number;
         rotateSpeed: number;
         ballMass: number;
         cannonStrength: number;
@@ -88,7 +90,7 @@ declare namespace MazeBall {
 declare namespace MazeBall {
     class PlayerControl extends f.Node {
         viewObject: f.Node;
-        controlledPlatform: f.Node;
+        controlledPlatformTurntable: TurnTable;
         readonly camera: f.ComponentCamera;
         private readonly rotateLeftKeys;
         private readonly rotateRightKeys;
@@ -118,5 +120,17 @@ declare namespace MazeBall {
     class Trigger extends f.Node {
         readonly box: f.ComponentRigidbody;
         constructor(_pos: f.Vector3, _size: f.Vector3);
+    }
+}
+declare namespace MazeBall {
+    class TurnTable extends f.Node {
+        private readonly axisX;
+        private readonly axisY;
+        private readonly axisZ;
+        constructor();
+        addChild(_child: f.Node): void;
+        rotateX(_angleInDegrees: number): void;
+        rotateY(_angleInDegrees: number): void;
+        rotateZ(_angleInDegrees: number): void;
     }
 }

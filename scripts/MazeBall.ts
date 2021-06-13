@@ -29,7 +29,7 @@ namespace MazeBall {
     scene.getChildrenByName("FinalPlatform")[0].addComponent(new ComponentPlatform(true));
     scene.getChildrenByName("Ball")[0].addComponent(new ComponentBall());
 
-    scene.getChildrenByName("Platform")[1].getChildrenByName("Wall")[0].addComponent(new ComponentMovingWall(5, 5, f.Vector3.X()));
+    //scene.getChildrenByName("Platform")[1].getChildrenByName("Wall")[0].addComponent(new ComponentMovingWall(5, 5, f.Vector3.X()));
     f.Debug.log("Scene:", scene);
 
     // setup player control

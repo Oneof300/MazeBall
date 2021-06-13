@@ -10,6 +10,7 @@ namespace MazeBall {
 
     fps: number;
     tiltSpeed: number;
+    tiltMax: number;
     rotateSpeed: number;
     ballMass: number;
     cannonStrength: number;
@@ -41,7 +42,7 @@ namespace MazeBall {
     }
 
     requestClickToStart(): void {
-      let message: HTMLElement = document.getElementById("message");
+      const message: HTMLElement = document.getElementById("message");
       message.className = "blink";
       message.innerText = "click to start";
 
@@ -50,7 +51,7 @@ namespace MazeBall {
 
     finish(_solved: boolean = true): void {      
       if (_solved) {
-        let message: HTMLElement = document.getElementById("message");
+        const message: HTMLElement = document.getElementById("message");
         message.className = "blink";
         message.innerText = "Finished!\nclick to reset";
 
