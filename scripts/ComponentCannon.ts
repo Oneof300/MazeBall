@@ -1,4 +1,4 @@
-namespace MazeBall {
+namespace MazeBallScripts {
   export class ComponentCannon extends ComponentScript {
 
     private trigger: Trigger;
@@ -29,7 +29,7 @@ namespace MazeBall {
       const mtxWorld: f.Matrix4x4 = this.getContainer().mtxWorld;
       const distanceToTarget: number = f.Vector3.DIFFERENCE(mtxWorld.translation, _target.mtxWorld.translation).magnitude;
       this.projectile.fire(f.Vector3.SUM(mtxWorld.translation, f.Vector3.SCALE(mtxWorld.getZ(), 2)),
-                           f.Vector3.SCALE(mtxWorld.getZ(), gameSettings.cannonStrength * distanceToTarget));
+                           f.Vector3.SCALE(mtxWorld.getZ(), mb.gameSettings.cannonStrength * distanceToTarget));
     }
 
   }

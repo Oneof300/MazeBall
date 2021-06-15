@@ -1,4 +1,4 @@
-namespace MazeBall {
+namespace MazeBallScripts {
   export class TurnTable extends f.Node {
 
     private readonly axisX: f.Node;
@@ -27,8 +27,8 @@ namespace MazeBall {
     public rotateX(_angleInDegrees: number): void {
       const axis: f.Matrix4x4 = this.axisX.mtxLocal;
       axis.rotateX(_angleInDegrees);
-      if (axis.rotation.x < -gameSettings.tiltMax) axis.rotateX(-gameSettings.tiltMax - axis.rotation.x);
-      if (axis.rotation.x > gameSettings.tiltMax) axis.rotateX(gameSettings.tiltMax - axis.rotation.x);
+      if (axis.rotation.x < -mb.gameSettings.tiltMax) axis.rotateX(-mb.gameSettings.tiltMax - axis.rotation.x);
+      if (axis.rotation.x > mb.gameSettings.tiltMax) axis.rotateX(mb.gameSettings.tiltMax - axis.rotation.x);
     }
 
     public rotateY(_angleInDegrees: number): void {
@@ -38,8 +38,8 @@ namespace MazeBall {
     public rotateZ(_angleInDegrees: number): void {
       const axis: f.Matrix4x4 = this.axisZ.mtxLocal;
       axis.rotateZ(_angleInDegrees);
-      if (axis.rotation.z < -gameSettings.tiltMax) axis.rotateZ(-gameSettings.tiltMax - axis.rotation.z);
-      if (axis.rotation.z > gameSettings.tiltMax) axis.rotateZ(gameSettings.tiltMax - axis.rotation.z);
+      if (axis.rotation.z < -mb.gameSettings.tiltMax) axis.rotateZ(-mb.gameSettings.tiltMax - axis.rotation.z);
+      if (axis.rotation.z > mb.gameSettings.tiltMax) axis.rotateZ(mb.gameSettings.tiltMax - axis.rotation.z);
     }
 
   }

@@ -1,4 +1,4 @@
-namespace MazeBall {
+namespace MazeBallScripts {
   export class Trigger extends f.Node {
 
     readonly box: f.ComponentRigidbody;

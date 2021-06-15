@@ -1,4 +1,4 @@
-namespace MazeBall {  
+namespace MazeBall {
 
   export let canvas: HTMLCanvasElement;
   export let scene: f.Graph;
@@ -11,7 +11,7 @@ namespace MazeBall {
     canvas = document.querySelector("canvas");
 
     // load resources referenced in the link-tag
-    await f.Project.loadResourcesFromHTML();
+    await f.Project.loadResources("./../resources/Scene.json");
     f.Debug.log("Project:", f.Project.resources);
 
     // load game settings
@@ -25,9 +25,9 @@ namespace MazeBall {
 
     // setup graph
     scene = f.Project.resources["Graph|2021-05-25T15:28:57.816Z|73244"] as f.Graph;
-    scene.getChildrenByName("Platform").forEach(platform => platform.addComponent(new ComponentPlatform()));
-    scene.getChildrenByName("FinalPlatform")[0].addComponent(new ComponentPlatform(true));
-    scene.getChildrenByName("Ball")[0].addComponent(new ComponentBall());
+    scene.getChildrenByName("Platform").forEach(platform => platform.addComponent(new mbs.ComponentPlatform()));
+    scene.getChildrenByName("FinalPlatform")[0].addComponent(new mbs.ComponentPlatform(true));
+    scene.getChildrenByName("Ball")[0].addComponent(new mbs.ComponentBall());
 
     //scene.getChildrenByName("Platform")[1].getChildrenByName("Wall")[0].addComponent(new ComponentMovingWall(5, 5, f.Vector3.X()));
     f.Debug.log("Scene:", scene);
@@ -42,7 +42,7 @@ namespace MazeBall {
     f.Debug.log("Viewport:", viewport);
 
     // setup audio
-    scene.addComponent(ComponentPlatform.swapControlAudio);
+    scene.addComponent(mbs.ComponentPlatform.swapControlAudio);
     let cmpListener: f.ComponentAudioListener = new f.ComponentAudioListener();
     scene.addComponent(cmpListener);
     f.AudioManager.default.listenWith(cmpListener);

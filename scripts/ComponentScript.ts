@@ -1,5 +1,8 @@
-namespace MazeBall {
+namespace MazeBallScripts {
+
   export import f = FudgeCore;
+
+  f.Project.registerScriptNamespace(MazeBallScripts);
   
   export class ComponentScript extends f.ComponentScript {
 

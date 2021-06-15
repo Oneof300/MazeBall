@@ -698,6 +698,25 @@
                           }
                         }
                       }
+                    ],
+                    "ComponentMovingWall": [
+                      {
+                        "MazeBallScripts.ComponentMovingWall": {
+                          "active": true,
+                          "vel": 10,
+                          "range": 5,
+                          "dir": {
+                            "x": 1,
+                            "y": 0,
+                            "z": 0
+                          },
+                          "origin": {
+                            "x": 0,
+                            "y": 0.75,
+                            "z": 7.75
+                          }
+                        }
+                      }
                     ]
                   },
                   "children": [],
@@ -751,6 +770,25 @@
                           },
                           "Component": {
                             "active": true
+                          }
+                        }
+                      }
+                    ],
+                    "ComponentMovingWall": [
+                      {
+                        "MazeBallScripts.ComponentMovingWall": {
+                          "active": true,
+                          "vel": 5,
+                          "range": 5,
+                          "dir": {
+                            "x": 1,
+                            "y": 0,
+                            "z": 0
+                          },
+                          "origin": {
+                            "x": 0,
+                            "y": 0.75,
+                            "z": -7.75
                           }
                         }
                       }

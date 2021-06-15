@@ -1,4 +1,4 @@
-namespace MazeBall {
+namespace MazeBallScripts {
   export class ComponentPlatform extends ComponentScript {
   
     static readonly swapControlAudio: f.ComponentAudio =
@@ -40,12 +40,12 @@ namespace MazeBall {
       });
 
       this.startPosition = this.getContainer().mtxLocal.translation;
-      game.addEventListener(EVENT_GAME.RESET, this.onGameReset);
+      mb.game.addEventListener(mb.EVENT_GAME.RESET, this.onGameReset);
     }
 
     protected onFloorCollisionEnter = (_event: f.EventPhysics) => {
       if (_event.cmpRigidbody.getContainer().name == "Ball") {
-        if (this.isFinal) game.finish();
+        if (this.isFinal) mb.game.finish();
         else this.swapControl();
       }
     }
@@ -55,8 +55,8 @@ namespace MazeBall {
     }
 
     private swapControl(): void {
-      if (playerControl.controlledPlatformTurntable != this.turnTable) {
-        playerControl.controlledPlatformTurntable = this.turnTable;
+      if (mb.playerControl.controlledPlatformTurntable != this.turnTable) {
+        mb.playerControl.controlledPlatformTurntable = this.turnTable;
         ComponentPlatform.swapControlAudio.play(true);
       }
     }

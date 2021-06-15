@@ -1,12 +1,12 @@
-namespace MazeBall {
+namespace MazeBallScripts {
   export class ComponentMovingWall extends ComponentScript {
 
-    private readonly vel: number;
-    private readonly range: number;
-    private readonly dir: f.Vector3;
+    private vel: number;
+    private range: number;
+    private dir: f.Vector3;
     private origin: f.Vector3;
     
-    constructor(_vel: number, _range: number, _dir: f.Vector3) {
+    constructor(_vel: number = 5, _range: number = 5, _dir: f.Vector3 = f.Vector3.X()) {
       super();
       this.vel = _vel;
       this.range = _range;

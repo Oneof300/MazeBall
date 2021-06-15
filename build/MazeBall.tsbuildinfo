@@ -4,11 +4,11 @@
     "sourceFiles": [
       "../scripts/ComponentScript.ts",
       "../References.ts",
+      "../scripts/Game.ts",
       "../scripts/ComponentBall.ts",
       "../scripts/ComponentCannon.ts",
       "../scripts/ComponentMovingWall.ts",
       "../scripts/ComponentPlatform.ts",
-      "../scripts/Game.ts",
       "../scripts/MazeBall.ts",
       "../scripts/PlayerControl.ts",
       "../scripts/Projectile.ts",
@@ -25,7 +25,7 @@
         },
         {
           "pos": 15,
-          "end": 20446,
+          "end": 21927,
           "kind": "text"
         }
       ],
@@ -53,7 +53,7 @@
       "sections": [
         {
           "pos": 0,
-          "end": 4118,
+          "end": 4298,
           "kind": "text"
         }
       ]

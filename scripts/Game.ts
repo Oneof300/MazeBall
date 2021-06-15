@@ -1,4 +1,7 @@
 namespace MazeBall {
+  
+  export import f = FudgeCore;
+  export import mbs = MazeBallScripts;
 
   export enum EVENT_GAME {
     START = "gamestart",
@@ -37,8 +40,9 @@ namespace MazeBall {
       window.addEventListener("load", () => {
         this.clock = document.getElementById("clock");
         this.clock.innerText = "0:00:000";
-        f.Loop.addEventListener(f.EVENT.LOOP_FRAME, this.update);
       });
+      this.addEventListener(EVENT_GAME.START, () => f.Loop.addEventListener(f.EVENT.LOOP_FRAME, this.update));
+      this.addEventListener(EVENT_GAME.END, () => f.Loop.removeEventListener(f.EVENT.LOOP_FRAME, this.update));
     }
 
     requestClickToStart(): void {
