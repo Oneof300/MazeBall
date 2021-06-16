@@ -1,17 +1,18 @@
-namespace MazeBallScripts {
+namespace MazeBall {
   export class Projectile extends f.Node {
 
-    private body: f.ComponentRigidbody;
+    private readonly body: f.ComponentRigidbody;
 
     constructor() {
       super("Projectile");
 
       this.addComponent(new f.ComponentMesh(f.Project.resources["MeshSphere|2021-05-25T15:26:35.712Z|33287"] as f.Mesh));
       this.addComponent(new f.ComponentMaterial(f.Project.resources["Material|2021-05-25T15:28:46.097Z|64234"] as f.Material));
-      this.addComponent(new f.ComponentTransform(f.Matrix4x4.SCALING(f.Vector3.ONE(0.75))));
+      this.addComponent(new f.ComponentTransform());
+      this.mtxLocal.scale(f.Vector3.ONE(0.75));
       this.mtxLocal.translateY(-1);
 
-      this.body = new f.ComponentRigidbody(mb.gameSettings.projectileMass, f.PHYSICS_TYPE.STATIC, f.COLLIDER_TYPE.SPHERE,
+      this.body = new f.ComponentRigidbody(gameSettings.projectileMass, f.PHYSICS_TYPE.STATIC, f.COLLIDER_TYPE.SPHERE,
                                            f.PHYSICS_GROUP.DEFAULT, this.mtxLocal);
       this.addComponent(this.body);
 

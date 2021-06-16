@@ -1,7 +1,6 @@
 namespace MazeBall {
   
   export import f = FudgeCore;
-  export import mbs = MazeBallScripts;
 
   export enum EVENT_GAME {
     START = "gamestart",
@@ -18,7 +17,7 @@ namespace MazeBall {
     ballMass: number;
     cannonStrength: number;
     projectileMass: number;
-    debugMode: string;
+    debugMode: f.PHYSICS_DEBUGMODE;
     debugDraw: boolean;
 
   }
@@ -26,38 +25,44 @@ namespace MazeBall {
   export let gameSettings: GameSettings;
 
   class Game extends EventTarget {
-    
+
+    #message: HTMLElement;
+    #clock: HTMLElement;
+
     private readonly eventStart: Event = new Event(EVENT_GAME.START);
     private readonly eventEnd: Event = new Event(EVENT_GAME.END);
     private readonly eventReset: Event = new Event(EVENT_GAME.RESET);
 
     private isFinished: boolean = false;
     private timePassed: Date = new Date(0);
-    private clock: HTMLElement;
 
     constructor() {
       super();
-      window.addEventListener("load", () => {
-        this.clock = document.getElementById("clock");
-        this.clock.innerText = "0:00:000";
-      });
       this.addEventListener(EVENT_GAME.START, () => f.Loop.addEventListener(f.EVENT.LOOP_FRAME, this.update));
       this.addEventListener(EVENT_GAME.END, () => f.Loop.removeEventListener(f.EVENT.LOOP_FRAME, this.update));
     }
 
+    private get message(): HTMLElement {
+      if (!this.#message) this.#message = document.getElementById("message");
+      return this.#message;
+    }
+
+    private get clock(): HTMLElement {
+      if (!this.#clock) this.#clock = document.getElementById("clock");
+      return this.#clock;
+    }
+
     requestClickToStart(): void {
-      const message: HTMLElement = document.getElementById("message");
-      message.className = "blink";
-      message.innerText = "click to start";
+      this.message.className = "blink";
+      this.message.innerText = "click to start";
 
       canvas.addEventListener("click", this.start);
     }
 
     finish(_solved: boolean = true): void {      
       if (_solved) {
-        const message: HTMLElement = document.getElementById("message");
-        message.className = "blink";
-        message.innerText = "Finished!\nclick to reset";
+        this.message.className = "blink";
+        this.message.innerText = "Finished!\nclick to reset";
 
         canvas.addEventListener("click", this.reset);
       }
@@ -73,6 +78,7 @@ namespace MazeBall {
 
       this.dispatchEvent(this.eventReset);
 
+      this.clock.innerText = "0:00:000";
       this.requestClickToStart();
       f.Loop.start(f.LOOP_MODE.TIME_REAL, gameSettings.fps);
     }
@@ -90,7 +96,7 @@ namespace MazeBall {
 
     private update = () => {
       this.timePassed = new Date(f.Time.game.get() - f.Loop.timeStartReal);
-      this.clock.innerText = this.timePassed.getMinutes() + ":" 
+      this.clock.innerText = this.timePassed.getMinutes() + ":"
         + this.timePassed.getSeconds().toLocaleString("en", {minimumIntegerDigits: 2}) + ":"
         + this.timePassed.getMilliseconds().toLocaleString("en", {minimumIntegerDigits: 3});
     }

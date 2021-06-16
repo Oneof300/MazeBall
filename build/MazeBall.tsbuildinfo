@@ -7,7 +7,7 @@
       "../scripts/Game.ts",
       "../scripts/ComponentBall.ts",
       "../scripts/ComponentCannon.ts",
-      "../scripts/ComponentMovingWall.ts",
+      "../scripts/ComponentMovement.ts",
       "../scripts/ComponentPlatform.ts",
       "../scripts/MazeBall.ts",
       "../scripts/PlayerControl.ts",
@@ -25,7 +25,7 @@
         },
         {
           "pos": 15,
-          "end": 21927,
+          "end": 22949,
           "kind": "text"
         }
       ],
@@ -53,7 +53,7 @@
       "sections": [
         {
           "pos": 0,
-          "end": 4298,
+          "end": 4171,
           "kind": "text"
         }
       ]

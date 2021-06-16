@@ -1,35 +1,45 @@
 namespace MazeBallScripts {
   export class ComponentCannon extends ComponentScript {
 
-    private trigger: Trigger;
-    private projectile: Projectile;
+    #projectile: MazeBall.Projectile;
+    
+    private triggerOffset: f.Vector3;
+    private triggerSize: f.Vector3;
 
-    constructor(_triggerOffset: f.Vector3, _triggerSize: f.Vector3) {
+    constructor(_triggerOffset: f.Vector3 = f.Vector3.ZERO(), _triggerSize: f.Vector3 = f.Vector3.ONE()) {
       super();
       this.singleton = true;
-
-      this.trigger = new Trigger(_triggerOffset, _triggerSize);
-      this.trigger.box.addEventListener(f.EVENT_PHYSICS.TRIGGER_ENTER, this.onTriggerEnter);
-
-      this.projectile = new Projectile();
+      this.triggerOffset = _triggerOffset;
+      this.triggerSize = _triggerSize;
     }
 
     protected onAdded(_event: Event): void {
-      this.getContainer().addChild(this.trigger);
-      this.getContainer().addChild(this.projectile);
+      const trigger: f.Node = new MazeBall.Trigger(this.triggerOffset, this.triggerSize);
+      trigger.addEventListener(f.EVENT_PHYSICS.TRIGGER_ENTER, this.onTriggerEnter);
+
+      this.#projectile = new MazeBall.Projectile();
+      
+      this.getContainer().addChild(trigger);
+      this.getContainer().addChild(this.#projectile);
     }
 
     private onTriggerEnter = (_event: f.EventPhysics) => {
       const other: f.Node = _event.cmpRigidbody.getContainer();
-      if (other.name == "Ball") this.fire(other);
+      if (_event.cmpRigidbody.getContainer().name == "Ball") this.fire(other);
     }
 
     private fire(_target: f.Node): void {
       console.log("fire");
-      const mtxWorld: f.Matrix4x4 = this.getContainer().mtxWorld;
-      const distanceToTarget: number = f.Vector3.DIFFERENCE(mtxWorld.translation, _target.mtxWorld.translation).magnitude;
-      this.projectile.fire(f.Vector3.SUM(mtxWorld.translation, f.Vector3.SCALE(mtxWorld.getZ(), 2)),
-                           f.Vector3.SCALE(mtxWorld.getZ(), mb.gameSettings.cannonStrength * distanceToTarget));
+
+      // calculate start position and force for the projectile to fire
+      const node: f.Node = this.getContainer();
+      const cannonPos: f.Vector3 = node.mtxWorld.translation;
+      const forward: f.Vector3 = node.mtxWorld.getZ();
+      const distanceToTarget: number = f.Vector3.DIFFERENCE(cannonPos, _target.mtxWorld.translation).magnitude;
+      const projectileStartPos: f.Vector3 = f.Vector3.SUM(cannonPos, f.Vector3.SCALE(forward, 2));
+      const force: f.Vector3 = f.Vector3.SCALE(forward, distanceToTarget * MazeBall.gameSettings.cannonStrength);
+      
+      this.#projectile.fire(projectileStartPos, force);
     }
 
   }
