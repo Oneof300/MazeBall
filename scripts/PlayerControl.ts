@@ -2,6 +2,7 @@ namespace MazeBall {
   class PlayerControl extends f.Node {
 
     viewObject: f.Node;
+    startPlatformTurntable: TurnTable;
     controlledPlatformTurntable: TurnTable;
     readonly camera: f.ComponentCamera;
 
@@ -39,7 +40,7 @@ namespace MazeBall {
     }
 
     private onGameStart = (_event: Event) => {
-      this.controlledPlatformTurntable = scene.getChildrenByName("TurnTable")[0] as TurnTable;
+      this.controlledPlatformTurntable = this.startPlatformTurntable;
       window.addEventListener("keydown", this.onKeyboardDown);
       canvas.addEventListener("mousemove", this.onMouseMove);
       canvas.addEventListener("wheel", this.onWheel);

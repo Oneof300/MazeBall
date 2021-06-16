@@ -4,20 +4,20 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>MazeBall - Spiel</title>
+    <!--Link stylesheet-->
+    <link rel="stylesheet" href="style.css" />
     <!--Load FUDGE-->
     <script src="libs/FudgeCore/FudgeCore.js"></script>
     <script src="libs/FudgeAid/FudgeAid.js"></script>
     <script src="libs/FudgePhysics/OimoPhysics.js"></script>
-    <!--Link stylesheet and internal resources-->
-    <link rel="stylesheet" href="style.css" />
-    <link type="resources" src="resources/scene.json" />
     <!--Load scripts-->
     <script src="build/MazeBall.js" editor="true"></script>
+    <link type="resources" src="resources/scene.json" />
   </head>
   <body>
     <!--Canvas for FUDGE to render to-->
     <canvas class="fullscreen"></canvas>
     <div id="message"></div>
-    <div id="clock"></div>
+    <div id="clock">0:00:000</div>
   </body>
 </html>

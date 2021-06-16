@@ -18,6 +18,8 @@ namespace MazeBall {
       this.axisZ = new f.Node("AxisZ");
       this.axisZ.addComponent(new f.ComponentTransform());
       this.axisX.addChild(this.axisZ);
+      
+      MazeBall.game.addEventListener(MazeBall.EVENT_GAME.RESET, this.onGameReset);
     }
 
     public addChild(_child: f.Node): void {
@@ -40,6 +42,12 @@ namespace MazeBall {
       axis.rotateZ(_angleInDegrees);
       if (axis.rotation.z < -gameSettings.tiltMax) axis.rotateZ(-gameSettings.tiltMax - axis.rotation.z);
       if (axis.rotation.z > gameSettings.tiltMax) axis.rotateZ(gameSettings.tiltMax - axis.rotation.z);
+    }
+
+    private onGameReset = (_event: Event) => {
+      this.axisX.mtxLocal.rotateX(-this.axisX.mtxLocal.rotation.x);
+      this.axisY.mtxLocal.rotateY(-this.axisY.mtxLocal.rotation.y);
+      this.axisZ.mtxLocal.rotateZ(-this.axisZ.mtxLocal.rotation.z);
     }
 
   }

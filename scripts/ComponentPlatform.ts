@@ -1,30 +1,51 @@
-namespace MazeBall {
+namespace MazeBallScripts {
   export class ComponentPlatform extends ComponentScript {
-  
-    static readonly swapControlAudio: f.ComponentAudio =
-      new f.ComponentAudio(new f.Audio("./resources/sounds/control_swap.mp3"));
     
-    readonly turnTable: TurnTable;
+    #turnTable: MazeBall.TurnTable;
 
-    private readonly isFinal: boolean;
-    private startPosition: f.Vector3;
+    private isFinal: boolean;
 
     constructor(_final: boolean = false) {
       super();
       this.singleton = true;
       this.isFinal = _final;
-      this.turnTable = new TurnTable();
     }
 
     protected onAdded(_event: Event): void {
+      this.getContainer().addEventListener(f.EVENT.CHILD_APPEND, this.onChildAppend);
+    }
+
+    private onChildAppend = (_event: Event) => {
+      if (_event.currentTarget == _event.target) {
+        // this components node has been appended
+        const node: f.Node = this.getContainer();
+        node.removeEventListener(f.EVENT.CHILD_APPEND, this.onChildAppend);
+
+        if (!this.isFinal) {
+          // Append turn table
+          this.#turnTable = new MazeBall.TurnTable();
+          node.getParent().addChild(this.#turnTable);
+          this.#turnTable.mtxLocal.translate(node.mtxLocal.translation);
+          node.mtxLocal.set(f.Matrix4x4.ROTATION(node.mtxLocal.rotation));
+          this.#turnTable.addChild(node);
+        }
+
+        this.addRigidBodies();
+      }
+    }
+
+    private onFloorCollisionEnter = (_event: f.EventPhysics) => {
+      if (_event.cmpRigidbody.getContainer().name == "Ball") {
+        if (this.isFinal) MazeBall.game.finish();
+        else this.swapControl();
+      }
+    }
+
+    private addRigidBodies(): void {
       const node: f.Node = this.getContainer();
 
-      node.getParent().addChild(this.turnTable);
-      this.turnTable.mtxLocal.translate(node.mtxLocal.translation);
-      node.mtxLocal.set(f.Matrix4x4.ROTATION(node.mtxLocal.rotation));
-      this.turnTable.addChild(node);
-
       node.getChildrenByName("Floor").forEach(floor => {
+        console.log("test");
         const body: f.ComponentRigidbody = new f.ComponentRigidbody(0, f.PHYSICS_TYPE.KINEMATIC, f.COLLIDER_TYPE.CUBE);
         body.addEventListener(f.EVENT_PHYSICS.COLLISION_ENTER, this.onFloorCollisionEnter);
         floor.addComponent(body);
@@ -36,28 +57,12 @@ namespace MazeBall {
       
       node.getChildrenByName("Cannon").forEach(cannon => {
         cannon.addComponent(new f.ComponentRigidbody(0, f.PHYSICS_TYPE.KINEMATIC, f.COLLIDER_TYPE.CUBE));
-        cannon.addComponent(new ComponentCannon(f.Vector3.Z(8.5), new f.Vector3(4, 4, 14)));
       });
-
-      this.startPosition = this.getContainer().mtxLocal.translation;
-      game.addEventListener(EVENT_GAME.RESET, this.onGameReset);
-    }
-
-    protected onFloorCollisionEnter = (_event: f.EventPhysics) => {
-      if (_event.cmpRigidbody.getContainer().name == "Ball") {
-        if (this.isFinal) game.finish();
-        else this.swapControl();
-      }
-    }
-
-    private onGameReset = (_event: Event) => {
-      this.getContainer().mtxLocal.set(f.Matrix4x4.TRANSLATION(this.startPosition));
     }
 
     private swapControl(): void {
-      if (playerControl.controlledPlatformTurntable != this.turnTable) {
-        playerControl.controlledPlatformTurntable = this.turnTable;
-        ComponentPlatform.swapControlAudio.play(true);
+      if (MazeBall.playerControl.controlledPlatformTurntable != this.#turnTable) {
+        MazeBall.playerControl.controlledPlatformTurntable = this.#turnTable;
       }
     }
 

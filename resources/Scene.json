@@ -146,13 +146,31 @@
                 {
                   "ƒ.ComponentTransform": {
                     "local": {
-                      "translation": "[0, 1, 0]",
+                      "translation": "[0, 2, 0]",
                       "rotation": "[0, 0, 0]",
                       "scaling": "[1, 1, 1]"
                     },
                     "Component": {
                       "active": true
                     }
+                  }
+                }
+              ],
+              "ComponentBall": [
+                {
+                  "MazeBallScripts.ComponentBall": {
+                    "active": true
+                  }
+                }
+              ],
+              "ComponentAudio": [
+                {
+                  "ƒ.ComponentAudio": {
+                    "active": true,
+                    "idResource": "Audio|2021-06-16T10:13:26.571Z|60073",
+                    "playing": false,
+                    "loop": false,
+                    "volume": 1
                   }
                 }
               ]
@@ -175,6 +193,14 @@
                     "Component": {
                       "active": true
                     }
+                  }
+                }
+              ],
+              "ComponentPlatform": [
+                {
+                  "MazeBallScripts.ComponentPlatform": {
+                    "active": true,
+                    "isFinal": false
                   }
                 }
               ]
@@ -285,7 +311,8 @@
                           }
                         }
                       }
-                    ]
+                    ],
+                    "ComponentMovement": []
                   },
                   "children": [],
                   "idSource": "Graph|2021-05-31T05:42:10.533Z|25639"
@@ -588,6 +615,14 @@
                     "Component": {
                       "active": true
                     }
+                  }
+                }
+              ],
+              "ComponentPlatform": [
+                {
+                  "MazeBallScripts.ComponentPlatform": {
+                    "active": true,
+                    "isFinal": false
                   }
                 }
               ]
@@ -1033,6 +1068,23 @@
                           }
                         }
                       }
+                    ],
+                    "ComponentCannon": [
+                      {
+                        "MazeBallScripts.ComponentCannon": {
+                          "active": true,
+                          "triggerOffset": {
+                            "x": 0,
+                            "y": 0,
+                            "z": 7.5
+                          },
+                          "triggerSize": {
+                            "x": 1.5,
+                            "y": 1.5,
+                            "z": 14
+                          }
+                        }
+                      }
                     ]
                   },
                   "children": []
@@ -1056,6 +1108,14 @@
                     "Component": {
                       "active": true
                     }
+                  }
+                }
+              ],
+              "ComponentPlatform": [
+                {
+                  "MazeBallScripts.ComponentPlatform": {
+                    "active": true,
+                    "isFinal": true
                   }
                 }
               ]
@@ -1165,6 +1225,30 @@
       "children": [],
       "idResource": "Graph|2021-05-31T05:42:10.533Z|25639",
       "type": "Graph"
+    }
+  },
+  "Audio|2021-06-16T10:13:26.571Z|60073": {
+    "ƒ.Audio": {
+      "url": "resources\\sounds\\ball_hit.mp3",
+      "idResource": "Audio|2021-06-16T10:13:26.571Z|60073",
+      "name": "AudioBallHit",
+      "type": "Audio"
+    }
+  },
+  "Audio|2021-06-16T10:14:04.222Z|44603": {
+    "ƒ.Audio": {
+      "url": "resources\\sounds\\control_swap.mp3",
+      "idResource": "Audio|2021-06-16T10:14:04.222Z|44603",
+      "name": "AudioControlSwap",
+      "type": "Audio"
+    }
+  },
+  "Audio|2021-06-16T10:14:28.003Z|29129": {
+    "ƒ.Audio": {
+      "url": "resources\\sounds\\finish.mp3",
+      "idResource": "Audio|2021-06-16T10:14:28.003Z|29129",
+      "name": "AudioFinish",
+      "type": "Audio"
     }
   }
 }

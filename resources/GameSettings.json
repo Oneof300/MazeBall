@@ -6,6 +6,6 @@
   "ballMass": 10,
   "cannonStrength": 3000,
   "projectileMass": 50,
-  "debugMode": "COLLIDERS",
+  "debugMode": 0,
   "debugDraw": true
 }
