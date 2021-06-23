@@ -18,7 +18,7 @@ namespace MazeBall {
 
     // load scene
     await f.Project.loadResources("./../resources/Scene.json");
-    const scene: f.Graph = f.Project.resources["Graph|2021-05-25T15:28:57.816Z|73244"] as f.Graph;
+    const scene: f.Graph = getResourceByName("Scene") as f.Graph;
     f.Debug.log("Scene:", scene);
 
     // setup player control

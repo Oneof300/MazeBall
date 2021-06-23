@@ -41,18 +41,14 @@ namespace MazeBallScripts {
     }
 
     private addRigidBodies(): void {
-      this.node.getChildrenByName("Floor").forEach(floor => {
-        const body: f.ComponentRigidbody = new f.ComponentRigidbody(0, f.PHYSICS_TYPE.KINEMATIC, f.COLLIDER_TYPE.CUBE);
-        body.addEventListener(f.EVENT_PHYSICS.COLLISION_ENTER, this.onFloorCollisionEnter);
-        floor.addComponent(body);
-      });
       
-      this.node.getChildrenByName("Wall").forEach(wall => {
-        wall.addComponent(new f.ComponentRigidbody(0, f.PHYSICS_TYPE.KINEMATIC, f.COLLIDER_TYPE.CUBE));
-      });
-      
-      this.node.getChildrenByName("Cannon").forEach(cannon => {
-        cannon.addComponent(new f.ComponentRigidbody(0, f.PHYSICS_TYPE.KINEMATIC, f.COLLIDER_TYPE.CUBE));
+      this.node.getChildren().forEach(child => {
+        let body: f.ComponentRigidbody = child.getComponent(f.ComponentRigidbody);
+        if (!body) {
+          body = new f.ComponentRigidbody(0, f.PHYSICS_TYPE.KINEMATIC, f.COLLIDER_TYPE.CUBE);
+          child.addComponent(body);
+        }
+        if (child.name == "Floor") body.addEventListener(f.EVENT_PHYSICS.COLLISION_ENTER, this.onFloorCollisionEnter);
       });
     }
 
