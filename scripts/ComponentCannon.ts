@@ -17,7 +17,7 @@ namespace MazeBallScripts {
       const trigger: f.Node = new MazeBall.Trigger(this.triggerOffset, this.triggerSize);
       trigger.addEventListener(f.EVENT_PHYSICS.TRIGGER_ENTER, this.onTriggerEnter);
 
-      this.#projectile = new MazeBall.Projectile(this.node.getComponent(f.ComponentMaterial).clrPrimary);
+      this.#projectile = new MazeBall.Projectile(this.node.getComponent(f.ComponentMaterial).material);
 
       this.node.addChild(trigger);
       this.node.addChild(this.#projectile);

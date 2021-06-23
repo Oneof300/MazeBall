@@ -3,14 +3,13 @@ namespace MazeBall {
 
     private readonly body: f.ComponentRigidbody;
 
-    constructor(_color: f.Color) {
+    constructor(_material: f.Material) {
       super("Projectile");
 
       this.addComponent(new f.ComponentMesh(f.Project.resources["MeshSphere|2021-05-25T15:26:35.712Z|33287"] as f.Mesh));
 
       const material: f.ComponentMaterial
-        = new f.ComponentMaterial(f.Project.resources["Material|2021-05-25T15:28:46.097Z|64234"] as f.Material);
-      material.clrPrimary = _color;
+        = new f.ComponentMaterial(_material);
       this.addComponent(material);
 
       this.addComponent(new f.ComponentTransform());

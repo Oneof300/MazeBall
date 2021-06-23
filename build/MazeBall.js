@@ -77,7 +77,7 @@ var MazeBallScripts;
         onAdded(_event) {
             const trigger = new MazeBall.Trigger(this.triggerOffset, this.triggerSize);
             trigger.addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, this.onTriggerEnter);
-            this.#projectile = new MazeBall.Projectile(this.node.getComponent(MazeBallScripts.f.ComponentMaterial).clrPrimary);
+            this.#projectile = new MazeBall.Projectile(this.node.getComponent(MazeBallScripts.f.ComponentMaterial).material);
             this.node.addChild(trigger);
             this.node.addChild(this.#projectile);
         }
@@ -373,6 +373,7 @@ var MazeBall;
             this.camera.mtxPivot.translateY(30);
             this.camera.mtxPivot.translateZ(-30);
             this.camera.mtxPivot.rotateX(45);
+            this.camera.clrBackground = MazeBall.f.Color.CSS("DeepSkyBlue");
             this.turnTable.addComponent(this.camera);
             this.addChild(this.turnTable);
             MazeBall.game.addEventListener(MazeBall.EVENT_GAME.START, this.onGameStart);
@@ -431,7 +432,7 @@ var MazeBall;
 var MazeBall;
 (function (MazeBall) {
     class Projectile extends MazeBall.f.Node {
-        constructor(_color) {
+        constructor(_material) {
             super("Projectile");
             this.onReset = (_event) => {
                 this.body.setPosition(MazeBall.f.Vector3.Y(-1));
@@ -439,8 +440,7 @@ var MazeBall;
                 this.activate(false);
             };
             this.addComponent(new MazeBall.f.ComponentMesh(MazeBall.f.Project.resources["MeshSphere|2021-05-25T15:26:35.712Z|33287"]));
-            const material = new MazeBall.f.ComponentMaterial(MazeBall.f.Project.resources["Material|2021-05-25T15:28:46.097Z|64234"]);
-            material.clrPrimary = _color;
+            const material = new MazeBall.f.ComponentMaterial(_material);
             this.addComponent(material);
             this.addComponent(new MazeBall.f.ComponentTransform());
             this.mtxLocal.scale(MazeBall.f.Vector3.ONE(0.75));

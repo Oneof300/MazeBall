@@ -123,7 +123,7 @@ declare namespace MazeBall {
 declare namespace MazeBall {
     class Projectile extends f.Node {
         private readonly body;
-        constructor(_color: f.Color);
+        constructor(_material: f.Material);
         fire(_pos: f.Vector3, _force: f.Vector3): void;
         private onReset;
     }

@@ -32,6 +32,7 @@ namespace MazeBall {
       this.camera.mtxPivot.translateY(30);
       this.camera.mtxPivot.translateZ(-30);
       this.camera.mtxPivot.rotateX(45);
+      this.camera.clrBackground = f.Color.CSS("DeepSkyBlue");
       this.turnTable.addComponent(this.camera);
 
       this.addChild(this.turnTable);
