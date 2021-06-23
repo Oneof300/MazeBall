@@ -5,7 +5,8 @@ namespace MazeBall {
   export enum EVENT_GAME {
     START = "gamestart",
     END = "gameend",
-    RESET = "gamereset"
+    RESET = "gamereset",
+    SOLVED = "gamesolved"
   }
 
   interface GameSettings {
@@ -32,15 +33,10 @@ namespace MazeBall {
     private readonly eventStart: Event = new Event(EVENT_GAME.START);
     private readonly eventEnd: Event = new Event(EVENT_GAME.END);
     private readonly eventReset: Event = new Event(EVENT_GAME.RESET);
+    private readonly eventSolved: Event = new Event(EVENT_GAME.SOLVED);
 
     private isFinished: boolean = false;
     private timePassed: Date = new Date(0);
-
-    constructor() {
-      super();
-      this.addEventListener(EVENT_GAME.START, () => f.Loop.addEventListener(f.EVENT.LOOP_FRAME, this.update));
-      this.addEventListener(EVENT_GAME.END, () => f.Loop.removeEventListener(f.EVENT.LOOP_FRAME, this.update));
-    }
 
     private get message(): HTMLElement {
       if (!this.#message) this.#message = document.getElementById("message");
@@ -65,10 +61,12 @@ namespace MazeBall {
         this.message.innerText = "Finished!\nclick to reset";
 
         canvas.addEventListener("click", this.reset);
+        this.dispatchEvent(this.eventSolved);
       }
       this.isFinished = true;
       this.dispatchEvent(this.eventEnd);
 
+      f.Loop.removeEventListener(f.EVENT.LOOP_FRAME, this.update);
       f.Loop.stop();
     }
 
@@ -92,10 +90,12 @@ namespace MazeBall {
       this.dispatchEvent(this.eventStart);
 
       f.Loop.start(f.LOOP_MODE.TIME_REAL, gameSettings.fps);
+      f.Loop.addEventListener(f.EVENT.LOOP_FRAME, this.update);
     }
 
     private update = () => {
-      this.timePassed = new Date(f.Time.game.get() - f.Loop.timeStartReal);
+      const millisPassed: number = f.Time.game.get() - f.Loop.timeStartReal;
+      this.timePassed = new Date(millisPassed > 0 ? millisPassed : 0);
       this.clock.innerText = this.timePassed.getMinutes() + ":"
         + this.timePassed.getSeconds().toLocaleString("en", {minimumIntegerDigits: 2}) + ":"
         + this.timePassed.getMilliseconds().toLocaleString("en", {minimumIntegerDigits: 3});

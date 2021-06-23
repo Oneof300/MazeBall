@@ -15,6 +15,10 @@ namespace MazeBallScripts {
       }
     }
 
+    protected get node(): f.Node {
+      return this.getContainer();
+    }
+
     protected onAdded?(_event: Event): void;
     
   }

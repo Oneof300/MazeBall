@@ -22,10 +22,8 @@ namespace MazeBall {
     f.Debug.log("Scene:", scene);
 
     // setup player control
-    scene.addChild(playerControl);
     playerControl.viewObject = scene.getChildrenByName("Ball")[0];
-    playerControl.startPlatformTurntable = scene.getChildrenByName("TurnTable")[0] as TurnTable;
-    console.log(playerControl.startPlatformTurntable);
+    scene.addChild(playerControl);
 
     // setup viewport
     viewport = new f.Viewport();
@@ -34,7 +32,7 @@ namespace MazeBall {
 
     // setup audio
     let cmpListener: f.ComponentAudioListener = new f.ComponentAudioListener();
-    scene.addComponent(cmpListener);
+    playerControl.addComponent(cmpListener);
     f.AudioManager.default.listenWith(cmpListener);
     f.AudioManager.default.listenTo(scene);
     f.Debug.log("Audio:", f.AudioManager.default);
@@ -51,6 +49,13 @@ namespace MazeBall {
   function update(): void {
     f.Physics.world.simulate(f.Loop.timeFrameReal / 1000);
     viewport.draw();
+  }
+
+  export function getResourceByName(_name: string): f.SerializableResource {
+    for (const resourceID in f.Project.resources) {
+      if (f.Project.resources[resourceID].name == _name) return f.Project.resources[resourceID];
+    }
+    return null;
   }
 
 }
