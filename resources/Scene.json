@@ -48,6 +48,30 @@
       "sectors": 9
     }
   },
+  "Audio|2021-06-16T10:13:26.571Z|60073": {
+    "ƒ.Audio": {
+      "url": "resources\\sounds\\ball_hit.mp3",
+      "idResource": "Audio|2021-06-16T10:13:26.571Z|60073",
+      "name": "AudioBallHit",
+      "type": "Audio"
+    }
+  },
+  "Audio|2021-06-16T10:14:04.222Z|44603": {
+    "ƒ.Audio": {
+      "url": "resources\\sounds\\control_swap.mp3",
+      "idResource": "Audio|2021-06-16T10:14:04.222Z|44603",
+      "name": "AudioControlSwap",
+      "type": "Audio"
+    }
+  },
+  "Audio|2021-06-16T10:14:28.003Z|29129": {
+    "ƒ.Audio": {
+      "url": "resources\\sounds\\finish.mp3",
+      "idResource": "Audio|2021-06-16T10:14:28.003Z|29129",
+      "name": "AudioFinish",
+      "type": "Audio"
+    }
+  },
   "Graph|2021-05-25T15:28:57.816Z|73244": {
     "ƒ.Graph": {
       "name": "Scene",
@@ -67,7 +91,7 @@
                     },
                     "light": {
                       "ƒ.LightAmbient": {
-                        "color": "[0.5019607843137255, 0.5019607843137255, 0.5019607843137255, 1]"
+                        "color": "[0.6313725490196078, 0.6313725490196078, 0.6313725490196078, 1]"
                       }
                     }
                   }
@@ -76,12 +100,12 @@
                   "ƒ.ComponentLight": {
                     "pivot": {
                       "translation": "[0, 0, 0]",
-                      "rotation": "[30, 60, 0]",
+                      "rotation": "[30, 30, 0]",
                       "scaling": "[1, 1, 1]"
                     },
                     "light": {
                       "ƒ.LightDirectional": {
-                        "color": "[0.9686274509803922, 1, 0.8, 1]"
+                        "color": "[0.9725490196078431, 1, 0.8196078431372549, 1]"
                       }
                     }
                   }
@@ -91,7 +115,7 @@
                     "pivot": {
                       "translation": "[0, 0, 0]",
                       "rotation": "[-30, 210, 0]",
-                      "scaling": "[1, 1, 1]"
+                      "scaling": "[1, 1.0010000467300415, 1]"
                     },
                     "light": {
                       "ƒ.LightDirectional": {
@@ -146,7 +170,7 @@
                 {
                   "ƒ.ComponentTransform": {
                     "local": {
-                      "translation": "[0, 2, 0]",
+                      "translation": "[0, 1, 0]",
                       "rotation": "[0, 0, 0]",
                       "scaling": "[1, 1, 1]"
                     },
@@ -160,17 +184,6 @@
                 {
                   "MazeBallScripts.ComponentBall": {
                     "active": true
-                  }
-                }
-              ],
-              "ComponentAudio": [
-                {
-                  "ƒ.ComponentAudio": {
-                    "active": true,
-                    "idResource": "Audio|2021-06-16T10:13:26.571Z|60073",
-                    "playing": false,
-                    "loop": false,
-                    "volume": 1
                   }
                 }
               ]
@@ -608,7 +621,7 @@
                 {
                   "ƒ.ComponentTransform": {
                     "local": {
-                      "translation": "[15, -3, 0]",
+                      "translation": "[16, -4, 0]",
                       "rotation": "[0, 270, 0]",
                       "scaling": "[1, 1, 1]"
                     },
@@ -1089,6 +1102,76 @@
                   },
                   "children": []
                 }
+              },
+              {
+                "ƒ.GraphInstance": {
+                  "name": "Wall",
+                  "components": {
+                    "ComponentMesh": [
+                      {
+                        "ƒ.ComponentMesh": {
+                          "idMesh": "MeshCube|2021-05-25T15:26:18.685Z|71551",
+                          "pivot": {
+                            "translation": "[0, 0, 0]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[0.5, 1.5, 6]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ],
+                    "ComponentMaterial": [
+                      {
+                        "ƒ.ComponentMaterial": {
+                          "sortForAlpha": false,
+                          "clrPrimary": "[0.984313725490196, 1, 0, 1]",
+                          "clrSecondary": "[1, 1, 1, 1]",
+                          "pivot": {
+                            "translation": "[0, 0]",
+                            "rotation": 0,
+                            "scaling": "[0.9929999113082886, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          },
+                          "idMaterial": "Material|2021-05-25T15:28:46.097Z|64234"
+                        }
+                      }
+                    ],
+                    "ComponentTransform": [
+                      {
+                        "ƒ.ComponentTransform": {
+                          "local": {
+                            "translation": "[7.25, 1, 4.5]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[1, 1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ],
+                    "ComponentMovement": [
+                      {
+                        "MazeBallScripts.ComponentMovement": {
+                          "active": true,
+                          "movement": {
+                            "x": 0,
+                            "y": 0,
+                            "z": -9
+                          },
+                          "speed": 1,
+                          "loop": true
+                        }
+                      }
+                    ]
+                  },
+                  "children": [],
+                  "idSource": "Graph|2021-05-31T05:42:10.533Z|25639"
+                }
               }
             ]
           }
@@ -1101,7 +1184,7 @@
                 {
                   "ƒ.ComponentTransform": {
                     "local": {
-                      "translation": "[0, 0, 0]",
+                      "translation": "[16, -6, 11]",
                       "rotation": "[0, 0, 0]",
                       "scaling": "[1, 1, 1]"
                     },
@@ -1162,7 +1245,7 @@
                       {
                         "ƒ.ComponentTransform": {
                           "local": {
-                            "translation": "[15, -6, 11]",
+                            "translation": "[0, 0, 0]",
                             "rotation": "[0, 0, 0]",
                             "scaling": "[1, 1, 1]"
                           },
@@ -1225,30 +1308,6 @@
       "children": [],
       "idResource": "Graph|2021-05-31T05:42:10.533Z|25639",
       "type": "Graph"
-    }
-  },
-  "Audio|2021-06-16T10:13:26.571Z|60073": {
-    "ƒ.Audio": {
-      "url": "resources\\sounds\\ball_hit.mp3",
-      "idResource": "Audio|2021-06-16T10:13:26.571Z|60073",
-      "name": "AudioBallHit",
-      "type": "Audio"
-    }
-  },
-  "Audio|2021-06-16T10:14:04.222Z|44603": {
-    "ƒ.Audio": {
-      "url": "resources\\sounds\\control_swap.mp3",
-      "idResource": "Audio|2021-06-16T10:14:04.222Z|44603",
-      "name": "AudioControlSwap",
-      "type": "Audio"
-    }
-  },
-  "Audio|2021-06-16T10:14:28.003Z|29129": {
-    "ƒ.Audio": {
-      "url": "resources\\sounds\\finish.mp3",
-      "idResource": "Audio|2021-06-16T10:14:28.003Z|29129",
-      "name": "AudioFinish",
-      "type": "Audio"
     }
   }
 }

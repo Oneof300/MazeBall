@@ -28,9 +28,9 @@ namespace MazeBall {
 
     public rotateX(_angleInDegrees: number): void {
       const axis: f.Matrix4x4 = this.axisX.mtxLocal;
-      axis.rotateX(_angleInDegrees);
-      if (axis.rotation.x < -gameSettings.tiltMax) axis.rotateX(-gameSettings.tiltMax - axis.rotation.x);
-      if (axis.rotation.x > gameSettings.tiltMax) axis.rotateX(gameSettings.tiltMax - axis.rotation.x);
+      let newAngle: number = _angleInDegrees + axis.rotation.x;
+      newAngle = newAngle > 0 ? Math.min(newAngle, gameSettings.tiltMax) : Math.max(newAngle, -gameSettings.tiltMax);
+      axis.rotateX(newAngle - axis.rotation.x);
     }
 
     public rotateY(_angleInDegrees: number): void {
@@ -39,9 +39,9 @@ namespace MazeBall {
 
     public rotateZ(_angleInDegrees: number): void {
       const axis: f.Matrix4x4 = this.axisZ.mtxLocal;
-      axis.rotateZ(_angleInDegrees);
-      if (axis.rotation.z < -gameSettings.tiltMax) axis.rotateZ(-gameSettings.tiltMax - axis.rotation.z);
-      if (axis.rotation.z > gameSettings.tiltMax) axis.rotateZ(gameSettings.tiltMax - axis.rotation.z);
+      let newAngle: number = _angleInDegrees + axis.rotation.z;
+      newAngle = newAngle > 0 ? Math.min(newAngle, gameSettings.tiltMax) : Math.max(newAngle, -gameSettings.tiltMax);
+      axis.rotateZ(newAngle - axis.rotation.z);
     }
 
     private onGameReset = (_event: Event) => {

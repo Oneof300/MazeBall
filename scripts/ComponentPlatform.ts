@@ -12,22 +12,21 @@ namespace MazeBallScripts {
     }
 
     protected onAdded(_event: Event): void {
-      this.getContainer().addEventListener(f.EVENT.CHILD_APPEND, this.onChildAppend);
+      this.node.addEventListener(f.EVENT.CHILD_APPEND, this.onChildAppend);
     }
 
     private onChildAppend = (_event: Event) => {
       if (_event.currentTarget == _event.target) {
         // this components node has been appended
-        const node: f.Node = this.getContainer();
-        node.removeEventListener(f.EVENT.CHILD_APPEND, this.onChildAppend);
+        this.node.removeEventListener(f.EVENT.CHILD_APPEND, this.onChildAppend);
 
         if (!this.isFinal) {
           // Append turn table
           this.#turnTable = new MazeBall.TurnTable();
-          node.getParent().addChild(this.#turnTable);
-          this.#turnTable.mtxLocal.translate(node.mtxLocal.translation);
-          node.mtxLocal.set(f.Matrix4x4.ROTATION(node.mtxLocal.rotation));
-          this.#turnTable.addChild(node);
+          this.node.getParent().addChild(this.#turnTable);
+          this.#turnTable.mtxLocal.translate(this.node.mtxLocal.translation);
+          this.node.mtxLocal.set(f.Matrix4x4.ROTATION(this.node.mtxLocal.rotation));
+          this.#turnTable.addChild(this.node);
         }
 
         this.addRigidBodies();
@@ -42,28 +41,23 @@ namespace MazeBallScripts {
     }
 
     private addRigidBodies(): void {
-      const node: f.Node = this.getContainer();
-
-      node.getChildrenByName("Floor").forEach(floor => {
-        console.log("test");
+      this.node.getChildrenByName("Floor").forEach(floor => {
         const body: f.ComponentRigidbody = new f.ComponentRigidbody(0, f.PHYSICS_TYPE.KINEMATIC, f.COLLIDER_TYPE.CUBE);
         body.addEventListener(f.EVENT_PHYSICS.COLLISION_ENTER, this.onFloorCollisionEnter);
         floor.addComponent(body);
       });
       
-      node.getChildrenByName("Wall").forEach(wall => {
+      this.node.getChildrenByName("Wall").forEach(wall => {
         wall.addComponent(new f.ComponentRigidbody(0, f.PHYSICS_TYPE.KINEMATIC, f.COLLIDER_TYPE.CUBE));
       });
       
-      node.getChildrenByName("Cannon").forEach(cannon => {
+      this.node.getChildrenByName("Cannon").forEach(cannon => {
         cannon.addComponent(new f.ComponentRigidbody(0, f.PHYSICS_TYPE.KINEMATIC, f.COLLIDER_TYPE.CUBE));
       });
     }
 
     private swapControl(): void {
-      if (MazeBall.playerControl.controlledPlatformTurntable != this.#turnTable) {
-        MazeBall.playerControl.controlledPlatformTurntable = this.#turnTable;
-      }
+      MazeBall.playerControl.controlledPlatformTurntable = this.#turnTable;
     }
 
   }
