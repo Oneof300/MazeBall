@@ -62,31 +62,48 @@ var MazeBallScripts;
 var MazeBallScripts;
 (function (MazeBallScripts) {
     class ComponentCannon extends MazeBallScripts.ComponentScript {
-        constructor(_triggerOffset = MazeBallScripts.f.Vector3.ZERO(), _triggerSize = MazeBallScripts.f.Vector3.ONE()) {
+        constructor(_range = 1) {
             super();
-            this.onTriggerEnter = (_event) => {
-                const other = _event.cmpRigidbody.getContainer();
-                if (other.name == "Ball")
-                    this.fire(other);
+            this.#ballWasInSight = false;
+            this.onGameStart = (_event) => {
+                MazeBallScripts.f.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update);
+            };
+            this.onGameEnd = (_event) => {
+                MazeBallScripts.f.Loop.removeEventListener("loopFrame" /* LOOP_FRAME */, this.update);
+            };
+            this.update = (_event) => {
+                const mtxWorld = this.node.mtxWorld;
+                const differenceToBall = MazeBallScripts.f.Vector3.DIFFERENCE(mtxWorld.translation, this.ball.translation);
+                const forward = mtxWorld.getZ();
+                const ballInSight = differenceToBall.magnitude < this.range && MazeBallScripts.f.Vector3.DOT(MazeBallScripts.f.Vector3.NORMALIZATION(differenceToBall), forward) < -0.975;
+                if (ballInSight && !this.#ballWasInSight)
+                    this.fire();
+                this.#ballWasInSight = ballInSight;
             };
             this.singleton = true;
-            this.triggerOffset = _triggerOffset;
-            this.triggerSize = _triggerSize;
+            this.range = _range;
         }
         #projectile;
-        onAdded(_event) {
-            const trigger = new MazeBall.Trigger(this.triggerOffset, this.triggerSize);
-            trigger.addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, this.onTriggerEnter);
-            this.#projectile = new MazeBall.Projectile(this.node.getComponent(MazeBallScripts.f.ComponentMaterial).material);
-            this.node.addChild(trigger);
-            this.node.addChild(this.#projectile);
+        #ball;
+        #ballWasInSight;
+        get ball() {
+            if (!this.#ball)
+                this.#ball = this.node.getAncestor().getChildrenByName("Ball")[0].mtxWorld;
+            return this.#ball;
         }
-        fire(_target) {
+        onAdded(_event) {
+            this.#projectile = new MazeBall.Projectile(this.node.getComponent(MazeBallScripts.f.ComponentMaterial).material);
+            this.node.addChild(this.#projectile);
+            // Lazy Pattern everywhere?
+            MazeBall.game.addEventListener(MazeBall.EVENT_GAME.START, this.onGameStart);
+            MazeBall.game.addEventListener(MazeBall.EVENT_GAME.END, this.onGameEnd);
+        }
+        fire() {
             console.log("fire");
             // calculate start position and force for the projectile to fire
             const cannonPos = this.node.mtxWorld.translation;
             const forward = this.node.mtxWorld.getZ();
-            const distanceToTarget = MazeBallScripts.f.Vector3.DIFFERENCE(cannonPos, _target.mtxWorld.translation).magnitude;
+            const distanceToTarget = MazeBallScripts.f.Vector3.DIFFERENCE(cannonPos, this.ball.translation).magnitude;
             const projectileStartPos = MazeBallScripts.f.Vector3.SUM(cannonPos, MazeBallScripts.f.Vector3.SCALE(forward, 1));
             const force = MazeBallScripts.f.Vector3.SCALE(forward, (10 - 10 / distanceToTarget) * MazeBall.gameSettings.cannonStrength);
             this.#projectile.fire(projectileStartPos, force);
@@ -207,11 +224,11 @@ var MazeBall;
     class Game extends EventTarget {
         constructor() {
             super(...arguments);
+            this.#isFinished = false;
             this.eventStart = new Event(EVENT_GAME.START);
             this.eventEnd = new Event(EVENT_GAME.END);
             this.eventReset = new Event(EVENT_GAME.RESET);
             this.eventSolved = new Event(EVENT_GAME.SOLVED);
-            this.isFinished = false;
             this.timePassed = new Date(0);
             this.reset = () => {
                 if (!this.isFinished)
@@ -224,7 +241,7 @@ var MazeBall;
                 MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, MazeBall.gameSettings.fps);
             };
             this.start = () => {
-                this.isFinished = false;
+                this.#isFinished = false;
                 document.getElementById("message").className = "invisible";
                 MazeBall.canvas.removeEventListener("click", this.start);
                 MazeBall.canvas.requestPointerLock();
@@ -240,8 +257,12 @@ var MazeBall;
                     + this.timePassed.getMilliseconds().toLocaleString("en", { minimumIntegerDigits: 3 });
             };
         }
+        #isFinished;
         #message;
         #clock;
+        get isFinished() {
+            return this.#isFinished;
+        }
         get message() {
             if (!this.#message)
                 this.#message = document.getElementById("message");
@@ -264,7 +285,7 @@ var MazeBall;
                 MazeBall.canvas.addEventListener("click", this.reset);
                 this.dispatchEvent(this.eventSolved);
             }
-            this.isFinished = true;
+            this.#isFinished = true;
             this.dispatchEvent(this.eventEnd);
             MazeBall.f.Loop.removeEventListener("loopFrame" /* LOOP_FRAME */, this.update);
             MazeBall.f.Loop.stop();
@@ -277,15 +298,17 @@ var MazeBall;
     let viewport;
     window.addEventListener("load", init);
     async function init() {
+        //await fetch("https://sftp.hs-furtwangen.de/~romingma/PRIMA/json_request.php?x=10");
+        //console.log(await fetch("https://sftp.hs-furtwangen.de/~romingma/PRIMA/json_request.php"));
         MazeBall.canvas = document.querySelector("canvas");
         MazeBall.f.Physics.initializePhysics();
         // load game settings
-        const response = await fetch("./../resources/GameSettings.json");
+        const response = await fetch("./resources/GameSettings.json");
         MazeBall.gameSettings = await response.json();
         MazeBall.f.Physics.settings.debugMode = MazeBall.gameSettings.debugMode;
         MazeBall.f.Physics.settings.debugDraw = MazeBall.gameSettings.debugDraw;
         // load scene
-        await MazeBall.f.Project.loadResources("./../resources/Scene.json");
+        await MazeBall.f.Project.loadResources("./resources/Scene.json");
         const scene = getResourceByName("Scene");
         MazeBall.f.Debug.log("Scene:", scene);
         // setup player control
