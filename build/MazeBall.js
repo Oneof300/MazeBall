@@ -178,16 +178,14 @@ var MazeBallScripts;
             this.node.addEventListener("childAppend" /* CHILD_APPEND */, this.onChildAppend);
         }
         addRigidBodies() {
-            this.node.getChildrenByName("Floor").forEach(floor => {
-                const body = new MazeBallScripts.f.ComponentRigidbody(0, MazeBallScripts.f.PHYSICS_TYPE.KINEMATIC, MazeBallScripts.f.COLLIDER_TYPE.CUBE);
-                body.addEventListener("ColliderEnteredCollision" /* COLLISION_ENTER */, this.onFloorCollisionEnter);
-                floor.addComponent(body);
-            });
-            this.node.getChildrenByName("Wall").forEach(wall => {
-                wall.addComponent(new MazeBallScripts.f.ComponentRigidbody(0, MazeBallScripts.f.PHYSICS_TYPE.KINEMATIC, MazeBallScripts.f.COLLIDER_TYPE.CUBE));
-            });
-            this.node.getChildrenByName("Cannon").forEach(cannon => {
-                cannon.addComponent(new MazeBallScripts.f.ComponentRigidbody(0, MazeBallScripts.f.PHYSICS_TYPE.KINEMATIC, MazeBallScripts.f.COLLIDER_TYPE.CUBE));
+            this.node.getChildren().forEach(child => {
+                let body = child.getComponent(MazeBallScripts.f.ComponentRigidbody);
+                if (!body) {
+                    body = new MazeBallScripts.f.ComponentRigidbody(0, MazeBallScripts.f.PHYSICS_TYPE.KINEMATIC, MazeBallScripts.f.COLLIDER_TYPE.CUBE);
+                    child.addComponent(body);
+                }
+                if (child.name == "Floor")
+                    body.addEventListener("ColliderEnteredCollision" /* COLLISION_ENTER */, this.onFloorCollisionEnter);
             });
         }
         swapControl() {
@@ -288,7 +286,7 @@ var MazeBall;
         MazeBall.f.Physics.settings.debugDraw = MazeBall.gameSettings.debugDraw;
         // load scene
         await MazeBall.f.Project.loadResources("./../resources/Scene.json");
-        const scene = MazeBall.f.Project.resources["Graph|2021-05-25T15:28:57.816Z|73244"];
+        const scene = getResourceByName("Scene");
         MazeBall.f.Debug.log("Scene:", scene);
         // setup player control
         MazeBall.playerControl.viewObject = scene.getChildrenByName("Ball")[0];
