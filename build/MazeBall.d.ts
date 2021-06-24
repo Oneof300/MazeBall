@@ -17,11 +17,13 @@ declare namespace MazeBallScripts {
 declare namespace MazeBallScripts {
     class ComponentCannon extends ComponentScript {
         #private;
-        private triggerOffset;
-        private triggerSize;
-        constructor(_triggerOffset?: f.Vector3, _triggerSize?: f.Vector3);
+        private range;
+        constructor(_range?: number);
+        private get ball();
         protected onAdded(_event: Event): void;
-        private onTriggerEnter;
+        private onGameStart;
+        private onGameEnd;
+        private update;
         private fire;
     }
 }
@@ -76,8 +78,8 @@ declare namespace MazeBall {
         private readonly eventEnd;
         private readonly eventReset;
         private readonly eventSolved;
-        private isFinished;
         private timePassed;
+        get isFinished(): boolean;
         private get message();
         private get clock();
         requestClickToStart(): void;

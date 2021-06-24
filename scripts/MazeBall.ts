@@ -7,17 +7,20 @@ namespace MazeBall {
   window.addEventListener("load", init);
 
   async function init(): Promise<void> {
+    //await fetch("https://sftp.hs-furtwangen.de/~romingma/PRIMA/json_request.php?x=10");
+    //console.log(await fetch("https://sftp.hs-furtwangen.de/~romingma/PRIMA/json_request.php"));
+
     canvas = document.querySelector("canvas");
     f.Physics.initializePhysics();
 
     // load game settings
-    const response: Response = await fetch("./../resources/GameSettings.json");
+    const response: Response = await fetch("./resources/GameSettings.json");
     gameSettings = await response.json();
     f.Physics.settings.debugMode = gameSettings.debugMode;
     f.Physics.settings.debugDraw = gameSettings.debugDraw;
 
     // load scene
-    await f.Project.loadResources("./../resources/Scene.json");
+    await f.Project.loadResources("./resources/Scene.json");
     const scene: f.Graph = getResourceByName("Scene") as f.Graph;
     f.Debug.log("Scene:", scene);
 

@@ -27,6 +27,7 @@ namespace MazeBall {
 
   class Game extends EventTarget {
 
+    #isFinished: boolean = false;
     #message: HTMLElement;
     #clock: HTMLElement;
 
@@ -35,8 +36,11 @@ namespace MazeBall {
     private readonly eventReset: Event = new Event(EVENT_GAME.RESET);
     private readonly eventSolved: Event = new Event(EVENT_GAME.SOLVED);
 
-    private isFinished: boolean = false;
     private timePassed: Date = new Date(0);
+
+    get isFinished(): boolean {
+      return this.#isFinished;
+    }
 
     private get message(): HTMLElement {
       if (!this.#message) this.#message = document.getElementById("message");
@@ -63,7 +67,7 @@ namespace MazeBall {
         canvas.addEventListener("click", this.reset);
         this.dispatchEvent(this.eventSolved);
       }
-      this.isFinished = true;
+      this.#isFinished = true;
       this.dispatchEvent(this.eventEnd);
 
       f.Loop.removeEventListener(f.EVENT.LOOP_FRAME, this.update);
@@ -82,7 +86,7 @@ namespace MazeBall {
     }
 
     private start = () => {
-      this.isFinished = false;
+      this.#isFinished = false;
       document.getElementById("message").className = "invisible";
       canvas.removeEventListener("click", this.start);
       canvas.requestPointerLock();

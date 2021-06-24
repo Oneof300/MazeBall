@@ -4,7 +4,7 @@
   "tiltMax": 30,
   "rotateSpeed": 0.03,
   "ballMass": 10,
-  "cannonStrength": 10000,
+  "cannonStrength": 5000,
   "projectileMass": 50,
   "debugMode": 0,
   "debugDraw": false
