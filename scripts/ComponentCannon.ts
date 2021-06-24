@@ -2,39 +2,58 @@ namespace MazeBallScripts {
   export class ComponentCannon extends ComponentScript {
 
     #projectile: MazeBall.Projectile;
+    #ball: f.Matrix4x4;
+    #ballWasInSight: boolean = false;
 
-    private triggerOffset: f.Vector3;
-    private triggerSize: f.Vector3;
+    private range: number;
 
-    constructor(_triggerOffset: f.Vector3 = f.Vector3.ZERO(), _triggerSize: f.Vector3 = f.Vector3.ONE()) {
+    constructor(_range: number = 1) {
       super();
       this.singleton = true;
-      this.triggerOffset = _triggerOffset;
-      this.triggerSize = _triggerSize;
+      this.range = _range;
+    }
+
+    private get ball(): f.Matrix4x4 {
+      if (!this.#ball) this.#ball = this.node.getAncestor().getChildrenByName("Ball")[0].mtxWorld;
+      return this.#ball;
     }
 
     protected onAdded(_event: Event): void {
-      const trigger: f.Node = new MazeBall.Trigger(this.triggerOffset, this.triggerSize);
-      trigger.addEventListener(f.EVENT_PHYSICS.TRIGGER_ENTER, this.onTriggerEnter);
-
       this.#projectile = new MazeBall.Projectile(this.node.getComponent(f.ComponentMaterial).material);
-
-      this.node.addChild(trigger);
       this.node.addChild(this.#projectile);
+
+      // Lazy Pattern everywhere?
+
+      MazeBall.game.addEventListener(MazeBall.EVENT_GAME.START, this.onGameStart);
+      MazeBall.game.addEventListener(MazeBall.EVENT_GAME.END, this.onGameEnd);
     }
 
-    private onTriggerEnter = (_event: f.EventPhysics) => {
-      const other: f.Node = _event.cmpRigidbody.getContainer();
-      if (other.name == "Ball") this.fire(other);
+    private onGameStart = (_event: Event) => {
+      f.Loop.addEventListener(f.EVENT.LOOP_FRAME, this.update);
     }
 
-    private fire(_target: f.Node): void {
+    private onGameEnd = (_event: Event) => {
+      f.Loop.removeEventListener(f.EVENT.LOOP_FRAME, this.update);
+    }
+
+    private update = (_event: Event) => {
+      const mtxWorld: f.Matrix4x4 = this.node.mtxWorld;
+      const differenceToBall: f.Vector3 = f.Vector3.DIFFERENCE(mtxWorld.translation, this.ball.translation);
+      const forward: f.Vector3 = mtxWorld.getZ();
+      const ballInSight: boolean
+        = differenceToBall.magnitude < this.range && f.Vector3.DOT(f.Vector3.NORMALIZATION(differenceToBall), forward) < -0.975;
+      
+      if (ballInSight && !this.#ballWasInSight) this.fire();
+      this.#ballWasInSight = ballInSight;
+    }
+
+    private fire(): void {
       console.log("fire");
 
       // calculate start position and force for the projectile to fire
       const cannonPos: f.Vector3 = this.node.mtxWorld.translation;
       const forward: f.Vector3 = this.node.mtxWorld.getZ();
-      const distanceToTarget: number = f.Vector3.DIFFERENCE(cannonPos, _target.mtxWorld.translation).magnitude;
+      const distanceToTarget: number = f.Vector3.DIFFERENCE(cannonPos, this.ball.translation).magnitude;
       const projectileStartPos: f.Vector3 = f.Vector3.SUM(cannonPos, f.Vector3.SCALE(forward, 1));
       const force: f.Vector3 = f.Vector3.SCALE(forward, (10 - 10 / distanceToTarget) * MazeBall.gameSettings.cannonStrength);
 

@@ -1209,16 +1209,7 @@
                       {
                         "MazeBallScripts.ComponentCannon": {
                           "active": true,
-                          "triggerOffset": {
-                            "x": 0,
-                            "y": 0,
-                            "z": 7.5
-                          },
-                          "triggerSize": {
-                            "x": 1.5,
-                            "y": 1.5,
-                            "z": 14
-                          }
+                          "range": 15
                         }
                       }
                     ]
