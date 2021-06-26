@@ -78,15 +78,22 @@ declare namespace MazeBall {
         private readonly eventEnd;
         private readonly eventReset;
         private readonly eventSolved;
-        private timePassed;
-        get isFinished(): boolean;
+        constructor();
+        get isRunning(): boolean;
         private get message();
         private get clock();
+        private get finishedDialog();
+        private get nameInput();
+        private get time();
+        private get menu();
         requestClickToStart(): void;
-        finish(_solved?: boolean): void;
-        reset: () => void;
+        end(_solved?: boolean): void;
+        private reset;
         private start;
         private update;
+        private onKeyDown;
+        private onFinishedDialogKeyDown;
+        private registerHighscore;
     }
     export const game: Game;
     export {};
