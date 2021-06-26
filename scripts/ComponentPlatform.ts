@@ -35,7 +35,7 @@ namespace MazeBallScripts {
 
     private onFloorCollisionEnter = (_event: f.EventPhysics) => {
       if (_event.cmpRigidbody.getContainer().name == "Ball") {
-        if (this.isFinal) MazeBall.game.finish();
+        if (this.isFinal) MazeBall.game.end();
         else this.swapControl();
       }
     }

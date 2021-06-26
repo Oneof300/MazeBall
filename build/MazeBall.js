@@ -182,7 +182,7 @@ var MazeBallScripts;
             this.onFloorCollisionEnter = (_event) => {
                 if (_event.cmpRigidbody.getContainer().name == "Ball") {
                     if (this.isFinal)
-                        MazeBall.game.finish();
+                        MazeBall.game.end();
                     else
                         this.swapControl();
                 }
@@ -223,26 +223,15 @@ var MazeBall;
     })(EVENT_GAME = MazeBall.EVENT_GAME || (MazeBall.EVENT_GAME = {}));
     class Game extends EventTarget {
         constructor() {
-            super(...arguments);
-            this.#isFinished = false;
+            super();
+            this.#isRunning = false;
             this.eventStart = new Event(EVENT_GAME.START);
             this.eventEnd = new Event(EVENT_GAME.END);
             this.eventReset = new Event(EVENT_GAME.RESET);
             this.eventSolved = new Event(EVENT_GAME.SOLVED);
-            this.timePassed = new Date(0);
-            this.reset = () => {
-                if (!this.isFinished)
-                    this.finish(false);
-                else
-                    MazeBall.canvas.removeEventListener("click", this.reset);
-                this.dispatchEvent(this.eventReset);
-                this.clock.innerText = "0:00:000";
-                this.requestClickToStart();
-                MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, MazeBall.gameSettings.fps);
-            };
             this.start = () => {
-                this.#isFinished = false;
-                document.getElementById("message").className = "invisible";
+                this.#isRunning = false;
+                this.message.hidden = true;
                 MazeBall.canvas.removeEventListener("click", this.start);
                 MazeBall.canvas.requestPointerLock();
                 this.dispatchEvent(this.eventStart);
@@ -251,17 +240,37 @@ var MazeBall;
             };
             this.update = () => {
                 const millisPassed = MazeBall.f.Time.game.get() - MazeBall.f.Loop.timeStartReal;
-                this.timePassed = new Date(millisPassed > 0 ? millisPassed : 0);
-                this.clock.innerText = this.timePassed.getMinutes() + ":"
-                    + this.timePassed.getSeconds().toLocaleString("en", { minimumIntegerDigits: 2 }) + ":"
-                    + this.timePassed.getMilliseconds().toLocaleString("en", { minimumIntegerDigits: 3 });
+                const timePassed = new Date(millisPassed > 0 ? millisPassed : 0);
+                this.clock.innerText
+                    = `${timePassed.getMinutes()}:${timePassed.getSeconds().toLocaleString("en", { minimumIntegerDigits: 2 })}:`
+                        + timePassed.getMilliseconds().toLocaleString("en", { minimumIntegerDigits: 3 });
             };
+            this.onKeyDown = (_event) => {
+                if (_event.code == MazeBall.f.KEYBOARD_CODE.ESC) {
+                    console.log("esc");
+                    if (this.finishedDialog.hidden)
+                        this.menu.hidden = !this.menu.hidden;
+                }
+            };
+            this.onFinishedDialogKeyDown = (_event) => {
+                if (_event.code == MazeBall.f.KEYBOARD_CODE.ENTER) {
+                    this.registerHighscore();
+                    this.finishedDialog.hidden = true;
+                    this.reset();
+                    this.finishedDialog.removeEventListener("keydown", this.onFinishedDialogKeyDown);
+                }
+            };
+            window.addEventListener("keydown", this.onKeyDown);
         }
-        #isFinished;
+        #isRunning;
         #message;
         #clock;
-        get isFinished() {
-            return this.#isFinished;
+        #finishedDialog;
+        #nameInput;
+        #time;
+        #menu;
+        get isRunning() {
+            return this.#isRunning;
         }
         get message() {
             if (!this.#message)
@@ -273,22 +282,72 @@ var MazeBall;
                 this.#clock = document.getElementById("clock");
             return this.#clock;
         }
+        get finishedDialog() {
+            if (!this.#finishedDialog)
+                this.#finishedDialog = document.getElementById("finished_dialog");
+            return this.#finishedDialog;
+        }
+        get nameInput() {
+            if (!this.#nameInput)
+                this.#nameInput = document.getElementById("name");
+            return this.#nameInput;
+        }
+        get time() {
+            if (!this.#time)
+                this.#time = document.getElementById("time");
+            return this.#time;
+        }
+        get menu() {
+            if (!this.#menu)
+                this.#menu = document.getElementById("menu");
+            return this.#menu;
+        }
         requestClickToStart() {
-            this.message.className = "blink";
+            this.message.hidden = false;
             this.message.innerText = "click to start";
             MazeBall.canvas.addEventListener("click", this.start);
         }
-        finish(_solved = true) {
-            if (_solved) {
-                this.message.className = "blink";
-                this.message.innerText = "Finished!\nclick to reset";
-                MazeBall.canvas.addEventListener("click", this.reset);
-                this.dispatchEvent(this.eventSolved);
-            }
-            this.#isFinished = true;
+        end(_solved = true) {
+            this.#isRunning = false;
             this.dispatchEvent(this.eventEnd);
             MazeBall.f.Loop.removeEventListener("loopFrame" /* LOOP_FRAME */, this.update);
             MazeBall.f.Loop.stop();
+            if (_solved) {
+                this.dispatchEvent(this.eventSolved);
+                this.time.innerText = this.clock.innerText;
+                this.finishedDialog.hidden = false;
+                this.nameInput.focus();
+                this.finishedDialog.addEventListener("keydown", this.onFinishedDialogKeyDown);
+            }
+        }
+        reset() {
+            if (this.isRunning)
+                this.end(false);
+            else
+                MazeBall.canvas.removeEventListener("click", this.reset);
+            this.dispatchEvent(this.eventReset);
+            this.clock.innerText = "0:00:000";
+            this.requestClickToStart();
+            MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, MazeBall.gameSettings.fps);
+        }
+        async registerHighscore() {
+            const path = "https://sftp.hs-furtwangen.de/~romingma/PRIMA/json_request.php";
+            // get highscores
+            const reponse = await fetch(path);
+            const json = await reponse.json();
+            const highscores = Array.from(Object.entries(json));
+            // add highscore
+            const existingScore = highscores.find(entry => entry[0] == this.nameInput.value);
+            if (existingScore) {
+                if (existingScore[1].localeCompare(this.time.innerText) > 0)
+                    existingScore[1] = this.time.innerText;
+            }
+            else
+                highscores.push([this.nameInput.value, this.time.innerText]);
+            console.log(highscores);
+            // update highscores
+            const params = highscores.map(entry => `${entry[0]}=${entry[1]}`).join("&");
+            await fetch(`${path}?${params}`);
         }
     }
     MazeBall.game = new Game();
@@ -298,8 +357,6 @@ var MazeBall;
     let viewport;
     window.addEventListener("load", init);
     async function init() {
-        //await fetch("https://sftp.hs-furtwangen.de/~romingma/PRIMA/json_request.php?x=10");
-        //console.log(await fetch("https://sftp.hs-furtwangen.de/~romingma/PRIMA/json_request.php"));
         MazeBall.canvas = document.querySelector("canvas");
         MazeBall.f.Physics.initializePhysics();
         // load game settings

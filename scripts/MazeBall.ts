@@ -6,10 +6,7 @@ namespace MazeBall {
 
   window.addEventListener("load", init);
 
-  async function init(): Promise<void> {
-    //await fetch("https://sftp.hs-furtwangen.de/~romingma/PRIMA/json_request.php?x=10");
-    //console.log(await fetch("https://sftp.hs-furtwangen.de/~romingma/PRIMA/json_request.php"));
-
+    async function init(): Promise<void> {
     canvas = document.querySelector("canvas");
     f.Physics.initializePhysics();
 

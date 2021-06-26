@@ -1,23 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap');
+
 html, body {
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
+  background-color: deepskyblue;
 }
 
 h1 {
   text-align: center;
   font-size: 12vh;
+  font-family: 'Ubuntu', sans-serif;
+  color: white;
+}
+
+h2 {
+  margin: 0 0 5vh 0;
+  text-align: center;
+  font-size: 9vh;
+  font-family: 'Ubuntu', sans-serif;
+}
+
+th, td {
+  padding: 1vh;
+}
+
+section, #finished_dialog, #menu {
+  margin: auto;
+  padding: 5vh;
+  border-radius: 5vh;
+  font-size: 4vh;
+  background-color: white;
 }
 
 section {
-  margin: 2vh 20vw;
+  width: 80vh;
+}
+
+#finished_dialog, #menu {
+  position: absolute;
+  left: 50vw;
+  top: 50vh;
+  transform: translate(-50%, -50%);
+  width: 50vh;
+}
+
+table {
+  width: 100%;
+  margin: 0 0 4vh 0;
+  padding: 1vh;
   font-size: 4vh;
+}
+
+.border {
+  border: 0.5vh solid black;
+  border-radius: 1vh;
+}
+
+.border table, .border div {
+  margin: 0;
+  padding: 0;
+}
+
+section div {
+  margin: 0 0 4vh 0;
+}
+
+#finished_dialog input {
+  margin: 0 0 0 25vh;
+  padding: 2vh;
+  width: 45vh;
+  transform: translate(-50%, 0);
+
+  border: 0.5vh solid black;
+  border-radius: 2vh; 
+
+  text-align: center;
+  font-size: 5vh;
+}
+
+input:focus {
+  outline: none;
+}
+
+#finished_dialog table {
+  text-align: center;
 }
 
 a {
   display: inline-block;
-  margin: 1vh 25vw;
-  width: 50vw;
+  margin: 0 50% 4vh 50%;
+  width: 90%;
+  transform: translate(-50%, 0);
   padding: 1%;
 
   color: black;
@@ -29,6 +103,10 @@ a {
   text-align: center;
   text-decoration: none;
   font-size: 6vh;
+}
+
+a:last-child {
+  margin-bottom: 0;
 }
 
 a:hover {
@@ -49,24 +127,26 @@ canvas.fullscreen {
   height: 100vh; 
 }
 
-div {
+#message, #clock {
+  position: absolute;
   color: white;
   text-shadow: 0.2vh 0.2vh 0.5vh black;
   font-size: 4vh;
 }
 
+#message {
+  left: 50vw;
+  top: 40vh;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
 #clock {
-  position: absolute;
   right: 10vh;
   top: 5vh;
 }
 
 .blink {
-  position: absolute;
-  left: 50vw;
-  top: 40vh;
-  transform: translate(-50%, -50%);
-  text-align: center;
   animation: blink-animation 1s infinite alternate;
 }
 
