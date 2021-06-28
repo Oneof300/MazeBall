@@ -9,9 +9,12 @@ declare namespace MazeBallScripts {
 declare namespace MazeBallScripts {
     class ComponentBall extends ComponentScript {
         #private;
+        private resetHeight;
+        constructor(_resetHight?: number);
         protected onAdded(_event: Event): void;
         private onGameReset;
-        private onCollision;
+        private onCollisionEnter;
+        private update;
     }
 }
 declare namespace MazeBallScripts {
@@ -88,7 +91,7 @@ declare namespace MazeBall {
         private get menu();
         requestClickToStart(): void;
         end(_solved?: boolean): void;
-        private reset;
+        reset(): void;
         private start;
         private update;
         private onKeyDown;

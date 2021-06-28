@@ -34,7 +34,10 @@ namespace MazeBallScripts {
     }
 
     private onFloorCollisionEnter = (_event: f.EventPhysics) => {
-      if (_event.cmpRigidbody.getContainer().name == "Ball") {
+      const target: f.ComponentRigidbody = _event.target as f.ComponentRigidbody;
+      const other: f.ComponentRigidbody = _event.cmpRigidbody;
+      if (other.getContainer().name == "Ball"
+        && other.getPosition().y > target.getPosition().y + target.getContainer().getComponent(f.ComponentMesh).mtxPivot.scaling.y) {
         if (this.isFinal) MazeBall.game.end();
         else this.swapControl();
       }
