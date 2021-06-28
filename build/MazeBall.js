@@ -23,19 +23,24 @@ var MazeBallScripts;
 var MazeBallScripts;
 (function (MazeBallScripts) {
     class ComponentBall extends MazeBallScripts.ComponentScript {
-        constructor() {
-            super(...arguments);
+        constructor(_resetHight = -1) {
+            super();
             this.onGameReset = (_event) => {
                 this.#body.setVelocity(MazeBallScripts.f.Vector3.ZERO());
                 this.#body.setAngularVelocity(MazeBallScripts.f.Vector3.ZERO());
-                this.#body.setPosition(MazeBallScripts.f.Vector3.Y(3));
+                this.#body.setPosition(MazeBallScripts.f.Vector3.Y(1));
             };
-            this.onCollision = (_event) => {
+            this.onCollisionEnter = (_event) => {
                 if (this.#audioBallHit) {
                     this.#audioBallHit.volume = this.#body.getVelocity().magnitude * 0.25;
                     this.#audioBallHit.play(true);
                 }
             };
+            this.update = (_event) => {
+                if (this.#body.getPosition().y < this.resetHeight)
+                    MazeBall.game.reset();
+            };
+            this.resetHeight = _resetHight;
         }
         #body;
         #audioBallHit;
@@ -53,8 +58,9 @@ var MazeBallScripts;
                     this.node.addComponent(this.#audioBallHit);
                 }
             }
-            this.#body.addEventListener("ColliderEnteredCollision" /* COLLISION_ENTER */, this.onCollision);
+            this.#body.addEventListener("ColliderEnteredCollision" /* COLLISION_ENTER */, this.onCollisionEnter);
             MazeBall.game.addEventListener(MazeBall.EVENT_GAME.RESET, this.onGameReset);
+            MazeBallScripts.f.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update);
         }
     }
     MazeBallScripts.ComponentBall = ComponentBall;
@@ -180,7 +186,10 @@ var MazeBallScripts;
                 }
             };
             this.onFloorCollisionEnter = (_event) => {
-                if (_event.cmpRigidbody.getContainer().name == "Ball") {
+                const target = _event.target;
+                const other = _event.cmpRigidbody;
+                if (other.getContainer().name == "Ball"
+                    && other.getPosition().y > target.getPosition().y + target.getContainer().getComponent(MazeBallScripts.f.ComponentMesh).mtxPivot.scaling.y) {
                     if (this.isFinal)
                         MazeBall.game.end();
                     else
@@ -230,7 +239,7 @@ var MazeBall;
             this.eventReset = new Event(EVENT_GAME.RESET);
             this.eventSolved = new Event(EVENT_GAME.SOLVED);
             this.start = () => {
-                this.#isRunning = false;
+                this.#isRunning = true;
                 this.message.hidden = true;
                 MazeBall.canvas.removeEventListener("click", this.start);
                 MazeBall.canvas.requestPointerLock();
@@ -438,6 +447,7 @@ var MazeBall;
             };
             this.onMouseMove = (_event) => {
                 const forward = this.turnTable.mtxLocal.getZ();
+                forward.transform(MazeBall.f.Matrix4x4.ROTATION(MazeBall.f.Vector3.SCALE(this.#controlledPlatformTurntable.mtxLocal.rotation, -1)));
                 this.controlledPlatformTurntable.rotateX((forward.x * _event.movementX - forward.z * _event.movementY) * MazeBall.gameSettings.tiltSpeed);
                 this.controlledPlatformTurntable.rotateZ((forward.x * _event.movementY + forward.z * _event.movementX) * MazeBall.gameSettings.tiltSpeed);
             };

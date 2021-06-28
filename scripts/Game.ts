@@ -101,7 +101,7 @@ namespace MazeBall {
       }
     }
 
-    private reset(): void {
+    reset(): void {
       if (this.isRunning) this.end(false);
       else canvas.removeEventListener("click", this.reset);
 
@@ -113,7 +113,7 @@ namespace MazeBall {
     }
 
     private start = () => {
-      this.#isRunning = false;
+      this.#isRunning = true;
       this.message.hidden = true;
       canvas.removeEventListener("click", this.start);
       canvas.requestPointerLock();

@@ -107,6 +107,7 @@ namespace MazeBall {
 
     private onMouseMove = (_event: MouseEvent) => {
       const forward: f.Vector3 = this.turnTable.mtxLocal.getZ();
+      forward.transform(f.Matrix4x4.ROTATION(f.Vector3.SCALE(this.#controlledPlatformTurntable.mtxLocal.rotation, -1)));
       this.controlledPlatformTurntable.rotateX((forward.x * _event.movementX - forward.z * _event.movementY) * gameSettings.tiltSpeed);
       this.controlledPlatformTurntable.rotateZ((forward.x * _event.movementY + forward.z * _event.movementX) * gameSettings.tiltSpeed);
     }
