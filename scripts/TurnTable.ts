@@ -26,6 +26,10 @@ namespace MazeBall {
       this.axisZ.addChild(_child);
     }
 
+    public getChild(_index: number): f.Node {
+      return this.axisZ.getChild(_index);
+    }
+
     public rotateX(_angleInDegrees: number): void {
       const axis: f.Matrix4x4 = this.axisX.mtxLocal;
       let newAngle: number = _angleInDegrees + axis.rotation.x;

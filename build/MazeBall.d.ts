@@ -46,6 +46,7 @@ declare namespace MazeBallScripts {
 declare namespace MazeBallScripts {
     class ComponentPlatform extends ComponentScript {
         #private;
+        private static readonly eventBallEnter;
         private isFinal;
         constructor(_final?: boolean);
         protected onAdded(_event: Event): void;
@@ -81,28 +82,30 @@ declare namespace MazeBall {
         private readonly eventEnd;
         private readonly eventReset;
         private readonly eventSolved;
+        private timePassed;
         constructor();
         get isRunning(): boolean;
+        private get canvas();
         private get message();
         private get clock();
+        private get menu();
         private get finishedDialog();
         private get nameInput();
         private get time();
-        private get menu();
         requestClickToStart(): void;
         end(_solved?: boolean): void;
         reset(): void;
         private start;
         private update;
         private onKeyDown;
-        private onFinishedDialogKeyDown;
+        private resume;
+        private onNameInputKeyDown;
         private registerHighscore;
     }
     export const game: Game;
     export {};
 }
 declare namespace MazeBall {
-    let canvas: HTMLCanvasElement;
     function getResourceByName(_name: string): f.SerializableResource;
 }
 declare namespace MazeBall {
@@ -122,7 +125,7 @@ declare namespace MazeBall {
         private onGameEnd;
         private onGameSolved;
         private update;
-        private onKeyboardDown;
+        private onKeyDown;
         private onMouseMove;
         private onWheel;
         private move;
@@ -153,6 +156,7 @@ declare namespace MazeBall {
         private readonly axisZ;
         constructor();
         addChild(_child: f.Node): void;
+        getChild(_index: number): f.Node;
         rotateX(_angleInDegrees: number): void;
         rotateY(_angleInDegrees: number): void;
         rotateZ(_angleInDegrees: number): void;

@@ -1,13 +1,11 @@
 namespace MazeBall {
 
-  export let canvas: HTMLCanvasElement;
-
   let viewport: f.Viewport;
 
   window.addEventListener("load", init);
 
-    async function init(): Promise<void> {
-    canvas = document.querySelector("canvas");
+  async function init(): Promise<void> {
+    const canvas: HTMLCanvasElement = document.querySelector("canvas");
     f.Physics.initializePhysics();
 
     // load game settings
@@ -24,6 +22,23 @@ namespace MazeBall {
     // setup player control
     playerControl.viewObject = scene.getChildrenByName("Ball")[0];
     scene.addChild(playerControl);
+
+    // setup scroll to rotate message
+    const message: HTMLElement = document.getElementById("message");
+
+    function onWheel(): void {
+      window.removeEventListener("wheel", onWheel);
+      message.hidden = true;
+    }
+
+    (scene.getChildrenByName("TurnTable")[1] as TurnTable)
+    .getChild(0)
+    .getComponent(MazeBallScripts.ComponentPlatform)
+    .addEventListener("ballenter", () => {
+      message.innerText = "scroll to rotate";
+      message.hidden = false;
+      window.addEventListener("wheel", onWheel);
+    });
 
     // setup viewport
     viewport = new f.Viewport();

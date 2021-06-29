@@ -81,15 +81,15 @@ namespace MazeBall {
     }
 
     private onGameStart = (_event: Event) => {
-      window.addEventListener("keydown", this.onKeyboardDown);
-      canvas.addEventListener("mousemove", this.onMouseMove);
-      canvas.addEventListener("wheel", this.onWheel);
+      window.addEventListener("keydown", this.onKeyDown);
+      window.addEventListener("mousemove", this.onMouseMove);
+      window.addEventListener("wheel", this.onWheel);
     }
 
     private onGameEnd = (_event: Event) => {
-      window.removeEventListener("keydown", this.onKeyboardDown);
-      canvas.removeEventListener("mousemove", this.onMouseMove);
-      canvas.removeEventListener("wheel", this.onWheel);
+      window.removeEventListener("keydown", this.onKeyDown);
+      window.removeEventListener("mousemove", this.onMouseMove);
+      window.removeEventListener("wheel", this.onWheel);
     }
 
     private onGameSolved = (_event: Event) => {
@@ -100,7 +100,7 @@ namespace MazeBall {
       this.move();
     }
 
-    private onKeyboardDown = (_event: f.EventKeyboard) => {
+    private onKeyDown = (_event: f.EventKeyboard) => {
       if (this.rotateLeftKeys.includes(_event.code)) this.rotateLeft();
       else if (this.rotateRightKeys.includes(_event.code)) this.rotateRight();
     }
