@@ -189,7 +189,9 @@ var MazeBallScripts;
                 const target = _event.target;
                 const other = _event.cmpRigidbody;
                 if (other.getContainer().name == "Ball"
+                    && MazeBall.playerControl.controlledPlatformTurntable != this.#turnTable
                     && other.getPosition().y > target.getPosition().y + target.getContainer().getComponent(MazeBallScripts.f.ComponentMesh).mtxPivot.scaling.y) {
+                    this.dispatchEvent(ComponentPlatform.eventBallEnter);
                     if (this.isFinal)
                         MazeBall.game.end();
                     else
@@ -218,6 +220,7 @@ var MazeBallScripts;
             MazeBall.playerControl.controlledPlatformTurntable = this.#turnTable;
         }
     }
+    ComponentPlatform.eventBallEnter = new Event("ballenter");
     MazeBallScripts.ComponentPlatform = ComponentPlatform;
 })(MazeBallScripts || (MazeBallScripts = {}));
 var MazeBall;
@@ -238,40 +241,64 @@ var MazeBall;
             this.eventEnd = new Event(EVENT_GAME.END);
             this.eventReset = new Event(EVENT_GAME.RESET);
             this.eventSolved = new Event(EVENT_GAME.SOLVED);
+            this.timePassed = new Date(0);
             this.start = () => {
+                window.removeEventListener("click", this.start);
                 this.#isRunning = true;
                 this.message.hidden = true;
-                MazeBall.canvas.removeEventListener("click", this.start);
-                MazeBall.canvas.requestPointerLock();
+                this.canvas.requestPointerLock();
                 this.dispatchEvent(this.eventStart);
-                MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, MazeBall.gameSettings.fps);
+                this.timePassed.setTime(0);
                 MazeBall.f.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update);
             };
             this.update = () => {
-                const millisPassed = MazeBall.f.Time.game.get() - MazeBall.f.Loop.timeStartReal;
-                const timePassed = new Date(millisPassed > 0 ? millisPassed : 0);
+                this.timePassed.setTime(this.timePassed.getTime() + MazeBall.f.Loop.timeFrameReal);
                 this.clock.innerText
-                    = `${timePassed.getMinutes()}:${timePassed.getSeconds().toLocaleString("en", { minimumIntegerDigits: 2 })}:`
-                        + timePassed.getMilliseconds().toLocaleString("en", { minimumIntegerDigits: 3 });
+                    = `${this.timePassed.getMinutes()}:${this.timePassed.getSeconds().toLocaleString("en", { minimumIntegerDigits: 2 })}:`
+                        + Math.floor(this.timePassed.getMilliseconds() / 10).toLocaleString("en", { minimumIntegerDigits: 2 });
             };
             this.onKeyDown = (_event) => {
                 if (_event.code == MazeBall.f.KEYBOARD_CODE.ESC) {
-                    console.log("esc");
-                    if (this.finishedDialog.hidden)
+                    if (this.finishedDialog.hidden) {
                         this.menu.hidden = !this.menu.hidden;
+                        document.exitPointerLock();
+                        MazeBall.f.Loop.stop();
+                        if (this.menu.hidden) {
+                            window.addEventListener("click", this.resume);
+                            if (this.isRunning) {
+                                this.message.innerText = "click to resume";
+                                this.message.hidden = false;
+                            }
+                        }
+                    }
+                    else {
+                        this.finishedDialog.removeEventListener("keydown", this.onNameInputKeyDown);
+                        this.finishedDialog.hidden = true;
+                        this.reset();
+                    }
+                }
+                if (_event.code == MazeBall.f.KEYBOARD_CODE.ENTER && this.finishedDialog.hidden) {
+                    console.log("enter");
+                    this.reset();
                 }
             };
-            this.onFinishedDialogKeyDown = (_event) => {
+            this.resume = () => {
+                this.message.hidden = true;
+                this.canvas.requestPointerLock();
+                MazeBall.f.Loop.start();
+            };
+            this.onNameInputKeyDown = (_event) => {
                 if (_event.code == MazeBall.f.KEYBOARD_CODE.ENTER) {
-                    this.registerHighscore();
+                    this.finishedDialog.removeEventListener("keydown", this.onNameInputKeyDown);
                     this.finishedDialog.hidden = true;
+                    this.registerHighscore();
                     this.reset();
-                    this.finishedDialog.removeEventListener("keydown", this.onFinishedDialogKeyDown);
                 }
             };
             window.addEventListener("keydown", this.onKeyDown);
         }
         #isRunning;
+        #canvas;
         #message;
         #clock;
         #finishedDialog;
@@ -280,6 +307,11 @@ var MazeBall;
         #menu;
         get isRunning() {
             return this.#isRunning;
+        }
+        get canvas() {
+            if (!this.#canvas)
+                this.#canvas = document.querySelector("canvas");
+            return this.#canvas;
         }
         get message() {
             if (!this.#message)
@@ -291,6 +323,11 @@ var MazeBall;
                 this.#clock = document.getElementById("clock");
             return this.#clock;
         }
+        get menu() {
+            if (!this.#menu)
+                this.#menu = document.getElementById("menu");
+            return this.#menu;
+        }
         get finishedDialog() {
             if (!this.#finishedDialog)
                 this.#finishedDialog = document.getElementById("finished_dialog");
@@ -298,7 +335,7 @@ var MazeBall;
         }
         get nameInput() {
             if (!this.#nameInput)
-                this.#nameInput = document.getElementById("name");
+                this.#nameInput = this.finishedDialog.querySelector("input");
             return this.#nameInput;
         }
         get time() {
@@ -306,15 +343,10 @@ var MazeBall;
                 this.#time = document.getElementById("time");
             return this.#time;
         }
-        get menu() {
-            if (!this.#menu)
-                this.#menu = document.getElementById("menu");
-            return this.#menu;
-        }
         requestClickToStart() {
             this.message.hidden = false;
             this.message.innerText = "click to start";
-            MazeBall.canvas.addEventListener("click", this.start);
+            window.addEventListener("click", this.start);
         }
         end(_solved = true) {
             this.#isRunning = false;
@@ -326,16 +358,16 @@ var MazeBall;
                 this.time.innerText = this.clock.innerText;
                 this.finishedDialog.hidden = false;
                 this.nameInput.focus();
-                this.finishedDialog.addEventListener("keydown", this.onFinishedDialogKeyDown);
+                this.nameInput.addEventListener("keydown", this.onNameInputKeyDown);
             }
         }
         reset() {
             if (this.isRunning)
                 this.end(false);
             else
-                MazeBall.canvas.removeEventListener("click", this.reset);
+                window.removeEventListener("click", this.reset);
             this.dispatchEvent(this.eventReset);
-            this.clock.innerText = "0:00:000";
+            this.clock.innerText = "0:00:00";
             this.requestClickToStart();
             MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, MazeBall.gameSettings.fps);
         }
@@ -366,7 +398,7 @@ var MazeBall;
     let viewport;
     window.addEventListener("load", init);
     async function init() {
-        MazeBall.canvas = document.querySelector("canvas");
+        const canvas = document.querySelector("canvas");
         MazeBall.f.Physics.initializePhysics();
         // load game settings
         const response = await fetch("./resources/GameSettings.json");
@@ -380,9 +412,23 @@ var MazeBall;
         // setup player control
         MazeBall.playerControl.viewObject = scene.getChildrenByName("Ball")[0];
         scene.addChild(MazeBall.playerControl);
+        // setup scroll to rotate message
+        const message = document.getElementById("message");
+        function onWheel() {
+            window.removeEventListener("wheel", onWheel);
+            message.hidden = true;
+        }
+        scene.getChildrenByName("TurnTable")[1]
+            .getChild(0)
+            .getComponent(MazeBallScripts.ComponentPlatform)
+            .addEventListener("ballenter", () => {
+            message.innerText = "scroll to rotate";
+            message.hidden = false;
+            window.addEventListener("wheel", onWheel);
+        });
         // setup viewport
         viewport = new MazeBall.f.Viewport();
-        viewport.initialize("Viewport", scene, MazeBall.playerControl.camera, MazeBall.canvas);
+        viewport.initialize("Viewport", scene, MazeBall.playerControl.camera, canvas);
         MazeBall.f.Debug.log("Viewport:", viewport);
         // setup audio
         let cmpListener = new MazeBall.f.ComponentAudioListener();
@@ -424,14 +470,14 @@ var MazeBall;
                 MazeBall.f.KEYBOARD_CODE.ARROW_RIGHT
             ];
             this.onGameStart = (_event) => {
-                window.addEventListener("keydown", this.onKeyboardDown);
-                MazeBall.canvas.addEventListener("mousemove", this.onMouseMove);
-                MazeBall.canvas.addEventListener("wheel", this.onWheel);
+                window.addEventListener("keydown", this.onKeyDown);
+                window.addEventListener("mousemove", this.onMouseMove);
+                window.addEventListener("wheel", this.onWheel);
             };
             this.onGameEnd = (_event) => {
-                window.removeEventListener("keydown", this.onKeyboardDown);
-                MazeBall.canvas.removeEventListener("mousemove", this.onMouseMove);
-                MazeBall.canvas.removeEventListener("wheel", this.onWheel);
+                window.removeEventListener("keydown", this.onKeyDown);
+                window.removeEventListener("mousemove", this.onMouseMove);
+                window.removeEventListener("wheel", this.onWheel);
             };
             this.onGameSolved = (_event) => {
                 this.audioFinish?.play(true);
@@ -439,7 +485,7 @@ var MazeBall;
             this.update = (_event) => {
                 this.move();
             };
-            this.onKeyboardDown = (_event) => {
+            this.onKeyDown = (_event) => {
                 if (this.rotateLeftKeys.includes(_event.code))
                     this.rotateLeft();
                 else if (this.rotateRightKeys.includes(_event.code))
@@ -587,6 +633,9 @@ var MazeBall;
         }
         addChild(_child) {
             this.axisZ.addChild(_child);
+        }
+        getChild(_index) {
+            return this.axisZ.getChild(_index);
         }
         rotateX(_angleInDegrees) {
             const axis = this.axisX.mtxLocal;

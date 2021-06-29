@@ -1,5 +1,7 @@
 namespace MazeBallScripts {
   export class ComponentPlatform extends ComponentScript {
+
+    private static readonly eventBallEnter: Event = new Event("ballenter");
     
     #turnTable: MazeBall.TurnTable;
 
@@ -37,7 +39,9 @@ namespace MazeBallScripts {
       const target: f.ComponentRigidbody = _event.target as f.ComponentRigidbody;
       const other: f.ComponentRigidbody = _event.cmpRigidbody;
       if (other.getContainer().name == "Ball"
+        && MazeBall.playerControl.controlledPlatformTurntable != this.#turnTable
         && other.getPosition().y > target.getPosition().y + target.getContainer().getComponent(f.ComponentMesh).mtxPivot.scaling.y) {
+        this.dispatchEvent(ComponentPlatform.eventBallEnter);
         if (this.isFinal) MazeBall.game.end();
         else this.swapControl();
       }

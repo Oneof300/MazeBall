@@ -28,6 +28,7 @@ namespace MazeBall {
   class Game extends EventTarget {
 
     #isRunning: boolean = false;
+    #canvas: HTMLCanvasElement;
     #message: HTMLElement;
     #clock: HTMLElement;
     #finishedDialog: HTMLElement;
@@ -40,6 +41,8 @@ namespace MazeBall {
     private readonly eventReset: Event = new Event(EVENT_GAME.RESET);
     private readonly eventSolved: Event = new Event(EVENT_GAME.SOLVED);
 
+    private timePassed: Date = new Date(0);
+
     constructor() {
       super();
       window.addEventListener("keydown", this.onKeyDown);
@@ -47,6 +50,11 @@ namespace MazeBall {
 
     get isRunning(): boolean {
       return this.#isRunning;
+    }
+
+    private get canvas(): HTMLElement {
+      if (!this.#canvas) this.#canvas = document.querySelector("canvas");
+      return this.#canvas;
     }
 
     private get message(): HTMLElement {
@@ -59,13 +67,18 @@ namespace MazeBall {
       return this.#clock;
     }
 
+    private get menu(): HTMLElement {
+      if (!this.#menu) this.#menu = document.getElementById("menu");
+      return this.#menu;
+    }
+
     private get finishedDialog(): HTMLElement {
       if (!this.#finishedDialog) this.#finishedDialog = document.getElementById("finished_dialog");
       return this.#finishedDialog;
     }
 
     private get nameInput(): HTMLInputElement {
-      if (!this.#nameInput) this.#nameInput = document.getElementById("name") as HTMLInputElement;
+      if (!this.#nameInput) this.#nameInput = this.finishedDialog.querySelector("input");
       return this.#nameInput;
     }
 
@@ -74,16 +87,11 @@ namespace MazeBall {
       return this.#time;
     }
 
-    private get menu(): HTMLElement {
-      if (!this.#menu) this.#menu = document.getElementById("menu");
-      return this.#menu;
-    }
-
     requestClickToStart(): void {
       this.message.hidden = false;
       this.message.innerText = "click to start";
 
-      canvas.addEventListener("click", this.start);
+      window.addEventListener("click", this.start);
     }
 
     end(_solved: boolean = true): void {
@@ -97,54 +105,79 @@ namespace MazeBall {
         this.time.innerText = this.clock.innerText;
         this.finishedDialog.hidden = false;
         this.nameInput.focus();
-        this.finishedDialog.addEventListener("keydown", this.onFinishedDialogKeyDown);
+        this.nameInput.addEventListener("keydown", this.onNameInputKeyDown);
       }
     }
 
     reset(): void {
       if (this.isRunning) this.end(false);
-      else canvas.removeEventListener("click", this.reset);
+      else window.removeEventListener("click", this.reset);
 
       this.dispatchEvent(this.eventReset);
 
-      this.clock.innerText = "0:00:000";
+      this.clock.innerText = "0:00:00";
       this.requestClickToStart();
       f.Loop.start(f.LOOP_MODE.TIME_REAL, gameSettings.fps);
     }
 
     private start = () => {
+      window.removeEventListener("click", this.start);
       this.#isRunning = true;
       this.message.hidden = true;
-      canvas.removeEventListener("click", this.start);
-      canvas.requestPointerLock();
+      this.canvas.requestPointerLock();
       
       this.dispatchEvent(this.eventStart);
 
-      f.Loop.start(f.LOOP_MODE.TIME_REAL, gameSettings.fps);
+      this.timePassed.setTime(0);
       f.Loop.addEventListener(f.EVENT.LOOP_FRAME, this.update);
     }
 
     private update = () => {
-      const millisPassed: number = f.Time.game.get() - f.Loop.timeStartReal;
-      const timePassed: Date = new Date(millisPassed > 0 ? millisPassed : 0);
+      this.timePassed.setTime(this.timePassed.getTime() + f.Loop.timeFrameReal);
       this.clock.innerText
-        = `${timePassed.getMinutes()}:${timePassed.getSeconds().toLocaleString("en", {minimumIntegerDigits: 2})}:`
-        + timePassed.getMilliseconds().toLocaleString("en", {minimumIntegerDigits: 3});
+        = `${this.timePassed.getMinutes()}:${this.timePassed.getSeconds().toLocaleString("en", {minimumIntegerDigits: 2})}:`
+        + Math.floor(this.timePassed.getMilliseconds() / 10).toLocaleString("en", {minimumIntegerDigits: 2});
     }
 
     private onKeyDown = (_event: KeyboardEvent) => {
       if (_event.code == f.KEYBOARD_CODE.ESC) {
-        console.log("esc");
-        if (this.finishedDialog.hidden) this.menu.hidden = !this.menu.hidden;
+        if (this.finishedDialog.hidden) {
+          this.menu.hidden = !this.menu.hidden;
+          document.exitPointerLock();
+          f.Loop.stop();
+
+          if (this.menu.hidden) {
+            window.addEventListener("click", this.resume);
+            if (this.isRunning) {
+              this.message.innerText = "click to resume";
+              this.message.hidden = false;
+            }
+          }
+        }
+        else {
+          this.finishedDialog.removeEventListener("keydown", this.onNameInputKeyDown);
+          this.finishedDialog.hidden = true;
+          this.reset();
+        }
+      }
+      if (_event.code == f.KEYBOARD_CODE.ENTER && this.finishedDialog.hidden) {
+        console.log("enter");
+        this.reset();
       }
     }
 
-    private onFinishedDialogKeyDown = (_event: KeyboardEvent) => {
+    private resume = () => {
+      this.message.hidden = true;
+      this.canvas.requestPointerLock();
+      f.Loop.start();
+    }
+
+    private onNameInputKeyDown = (_event: KeyboardEvent) => {
       if (_event.code == f.KEYBOARD_CODE.ENTER) {
-        this.registerHighscore();
+        this.finishedDialog.removeEventListener("keydown", this.onNameInputKeyDown);
         this.finishedDialog.hidden = true;
+        this.registerHighscore();
         this.reset();
-        this.finishedDialog.removeEventListener("keydown", this.onFinishedDialogKeyDown);
       }
     }
 
