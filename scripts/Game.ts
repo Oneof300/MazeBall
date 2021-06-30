@@ -115,7 +115,7 @@ namespace MazeBall {
 
       this.dispatchEvent(this.eventReset);
 
-      this.clock.innerText = "0:00:00";
+      this.clock.innerText = "0:00.00";
       this.requestClickToStart();
       f.Loop.start(f.LOOP_MODE.TIME_REAL, gameSettings.fps);
     }
@@ -135,7 +135,7 @@ namespace MazeBall {
     private update = () => {
       this.timePassed.setTime(this.timePassed.getTime() + f.Loop.timeFrameReal);
       this.clock.innerText
-        = `${this.timePassed.getMinutes()}:${this.timePassed.getSeconds().toLocaleString("en", {minimumIntegerDigits: 2})}:`
+        = `${this.timePassed.getMinutes()}:${this.timePassed.getSeconds().toLocaleString("en", {minimumIntegerDigits: 2})}.`
         + Math.floor(this.timePassed.getMilliseconds() / 10).toLocaleString("en", {minimumIntegerDigits: 2});
     }
 

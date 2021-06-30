@@ -254,7 +254,7 @@ var MazeBall;
             this.update = () => {
                 this.timePassed.setTime(this.timePassed.getTime() + MazeBall.f.Loop.timeFrameReal);
                 this.clock.innerText
-                    = `${this.timePassed.getMinutes()}:${this.timePassed.getSeconds().toLocaleString("en", { minimumIntegerDigits: 2 })}:`
+                    = `${this.timePassed.getMinutes()}:${this.timePassed.getSeconds().toLocaleString("en", { minimumIntegerDigits: 2 })}.`
                         + Math.floor(this.timePassed.getMilliseconds() / 10).toLocaleString("en", { minimumIntegerDigits: 2 });
             };
             this.onKeyDown = (_event) => {
@@ -367,7 +367,7 @@ var MazeBall;
             else
                 window.removeEventListener("click", this.reset);
             this.dispatchEvent(this.eventReset);
-            this.clock.innerText = "0:00:00";
+            this.clock.innerText = "0:00.00";
             this.requestClickToStart();
             MazeBall.f.Loop.start(MazeBall.f.LOOP_MODE.TIME_REAL, MazeBall.gameSettings.fps);
         }
