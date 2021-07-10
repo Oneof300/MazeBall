@@ -7,6 +7,9 @@ https://github.com/Oneof300/MazeBall
 Github-Pages app:  
 https://oneof300.github.io/MazeBall/
 
+source code:  
+https://github.com/Oneof300/MazeBall/tree/main/scripts
+
 concept (only german version available):  
 https://github.com/Oneof300/MazeBall/blob/main/concepts/Maze_Ball_Konzept.pdf
 
