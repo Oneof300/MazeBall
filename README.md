@@ -8,7 +8,7 @@ Github-Pages app:
 https://oneof300.github.io/MazeBall/
 
 concept (only german version available):  
-https://github.com/Oneof300/MazeBall/concepts/Maze_Ball_Konzept.pdf
+https://github.com/Oneof300/MazeBall/blob/main/concepts/Maze_Ball_Konzept.pdf
 
 ## Manual
 Your goal is to move the red ball to the final platform wich is highlighted with a green color. To move the ball there you
@@ -36,5 +36,5 @@ In-Game-Menu:
 
 ### Installation
 To install Maze Ball you need to download a zip-compressed release from
-https://github.com/Oneof300/MazeBall/releases. Extract the zip-file and run MazeBall.bat to run the game.
+https://github.com/Oneof300/MazeBall/blob/main/releases. Extract the zip-file and run MazeBall.bat to run the game.
 In order to be able to run the game node.js is required, which can be downloaded from https://nodejs.org/en/download/.
