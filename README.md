@@ -17,6 +17,7 @@ The current time that has passed can be seen at the top right corner of the wind
 reaching the final platform you're asked to enter your name, to enlist your time in the highscore-list with the given name.
 By pressing enter your time will be saved and the maze gets resetted.
 
+
 Start-Menu:
 - "Play" leads you to the game
 - "Highscores" leads you to the hisghscore table
