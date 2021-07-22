@@ -13,6 +13,9 @@ https://github.com/Oneof300/MazeBall/tree/main/scripts
 concept (german):  
 https://github.com/Oneof300/MazeBall/blob/main/concepts/Maze_Ball_Konzept.pdf
 
+project folder:
+https://github.com/Oneof300/MazeBall/archive/refs/heads/main.zip
+
 ## Manual
 Your goal is to move the red ball to the final platform wich is highlighted with a green color. To move the ball there you
 need to tilt the platforms. But you not only want to reach the final platform, you also want to get there as fast as possible.
