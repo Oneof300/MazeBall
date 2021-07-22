@@ -13,7 +13,7 @@ https://github.com/Oneof300/MazeBall/tree/main/scripts
 concept (german):  
 https://github.com/Oneof300/MazeBall/blob/main/concepts/Maze_Ball_Konzept.pdf
 
-project folder:
+project folder:  
 https://github.com/Oneof300/MazeBall/archive/refs/heads/main.zip
 
 ## Manual
