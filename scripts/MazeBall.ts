@@ -55,14 +55,14 @@ namespace MazeBall {
     // start
     f.Physics.adjustTransforms(scene, true);
     f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
-    f.Loop.start(f.LOOP_MODE.TIME_REAL, gameSettings.fps);
+    f.Loop.start(f.LOOP_MODE.TIME_GAME, gameSettings.fps);
     viewport.draw();
 
     game.requestClickToStart();
   }
 
   function update(): void {
-    f.Physics.world.simulate(f.Loop.timeFrameReal / 1000);
+    f.Physics.world.simulate(Math.min(0.1, ƒ.Loop.timeFrameGame / 1000));
     viewport.draw();
   }
 
